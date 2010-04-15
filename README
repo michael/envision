@@ -1,0 +1,9 @@
+Install rails
+
+gem install rails --pre
+
+# Gemfile
+gem 'ken'
+
+# Start the server
+rails server
