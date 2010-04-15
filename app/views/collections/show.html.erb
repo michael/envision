@@ -1,0 +1,24 @@
+<h1><%= @collection.name %></h1>
+<p><%= @collection.descr %></p>
+
+<h3>Facet Categories</h3>
+<ul>
+  <% @collection.facet_categories.each do |fc| %>#
+    <li><%= fc.name %></li>
+  <% end %>
+</ul>
+
+<h3>Items</h3>
+<ul>
+
+<% @collection.items.each do |item| %>
+  <li>
+    <%= item.name %>
+    <ul>
+      <% item.facets.each do |f| %>
+        <li><%= f.facet_category.name %>: <% f.facet_values.map { |v| v.value }.join(", ") %></li>
+      <% end %>
+    </ul>
+  </li>
+<% end %>
+</ul>

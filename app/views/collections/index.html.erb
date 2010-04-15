@@ -1,17 +1,5 @@
-<h1><%= @topic.name %></h1>
-
-<p><%= @topic.description %></p>
-
-
-<% @topic.attributes.each do |a| %>
-  <h3><%= a.property.name %></h3>
-  <ul>
-    <% a.values.each do |v| %>
-      <% if a.property.object_type? %>
-        <li><a href="/collections/?id=<%= v.id  %>"><%= v %></a></li>
-      <% else %>
-        <li><%= v %></li>
-      <% end %>
-    <% end %>
-  </ul>
+<ul>
+<% @collections.each do |c| %>
+  <li><a href="/collections/<%= c.id %>"><%= c.name %></a></li>
 <% end %>
+</ul>

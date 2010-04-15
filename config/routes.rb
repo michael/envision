@@ -1,6 +1,7 @@
 Envision::Application.routes.draw do |map|
   resources :collections
-
+  
+  
   # The priority is based upon order of creation:
   # first created -> highest priority.
 

@@ -1,7 +1,12 @@
 class CollectionsController < ApplicationController
   def index
-    # desired API
-    # Ken.all(:type => "/en/new_order") -> returns a Ken::Collection containing a number oKen::TypedResources
-    @topic = Ken::Topic.get(params[:id])
+    @collections = Collection.find({}) # find all
+  end
+  
+  def show
+    FacetCategory # monkey patch - just load the Facet Category Model
+    Item
+    Facet
+    @collection = Collection[params[:id]]
   end
 end
