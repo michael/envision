@@ -1,10 +1,10 @@
 <h1><%= @collection.name %></h1>
 <p><%= @collection.descr %></p>
 
-<h3>Facet Categories</h3>
+<h3>Properties</h3>
 <ul>
-  <% @collection.facet_categories.each do |fc| %>#
-    <li><%= fc.name %></li>
+  <% @collection.properties.each do |p| %>#
+    <li><%= p.name %></li>
   <% end %>
 </ul>
 
@@ -15,8 +15,8 @@
   <li>
     <%= item.name %>
     <ul>
-      <% item.facets.each do |f| %>
-        <li><%= f.facet_category.name %>: <% f.facet_values.map { |v| v.value }.join(", ") %></li>
+      <% item.attributes.each do |a| %>
+        <li><%= a.property.name %>: <% a.values.map { |v| v.value }.join(", ") %></li>
       <% end %>
     </ul>
   </li>
