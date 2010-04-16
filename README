@@ -1,9 +1,7 @@
-Install rails
-
+Installation
+======================
+# Install rails
 gem install rails --pre
-
-# Gemfile
-gem 'ken'
 
 # Start redis
 ./redis-server
@@ -12,49 +10,19 @@ gem 'ken'
 rails server
 
 
-
 Current Mission:
-- prepare some test data, that has 
+======================
+- prepare some suitable test data
     - set of countries
     - set of music artists (minimal techno genre)
-    - set of movies (facets: directory, )
+    - set of movies (facets: director, filming location, budget, etc.)
     
-- define a json collection format
+- define a uniform json collection format
 
 - Collection#load should load a collection by accessing the service located at Collection#uri.
   The parsed json data is then parsed and serialized to ruby objects and persisted in redis.
   
 
-Troubles:
-
-Seems like models are lazy loaded in Rails 3?
-
-# this doesn't work
-dubmac:envision michael$ rails console
-Loading development environment (Rails 3.0.0.beta3)
-irb(main):001:0> Collection[1]
-NoMethodError: You tried to call FacetCategory#to_s, but FacetCategory is not defined on /Users/michael/.bundle/ruby/1.9.1/bundler/gems/ohm-20229253b1595a7f4c08ebf309f5c5e466dfcd4c-master/lib/ohm.rb:707:in `const_get'
-	from /Users/michael/.bundle/ruby/1.9.1/bundler/gems/ohm-20229253b1595a7f4c08ebf309f5c5e466dfcd4c-master/lib/ohm.rb:76:in `method_missing'
-	from /Users/michael/.bundle/ruby/1.9.1/bundler/gems/ohm-20229253b1595a7f4c08ebf309f5c5e466dfcd4c-master/lib/ohm.rb:203:in `inspect'
-	from /Users/michael/.bundle/ruby/1.9.1/bundler/gems/ohm-20229253b1595a7f4c08ebf309f5c5e466dfcd4c-master/lib/ohm.rb:665:in `block in inspect'
-	from /Users/michael/.bundle/ruby/1.9.1/bundler/gems/ohm-20229253b1595a7f4c08ebf309f5c5e466dfcd4c-master/lib/ohm.rb:658:in `map'
-	from /Users/michael/.bundle/ruby/1.9.1/bundler/gems/ohm-20229253b1595a7f4c08ebf309f5c5e466dfcd4c-master/lib/ohm.rb:658:in `inspect'
-	from /Users/michael/.rvm/gems/ruby-1.9.1-p376/gems/railties-3.0.0.beta3/lib/rails/commands/console.rb:47:in `start'
-	from /Users/michael/.rvm/gems/ruby-1.9.1-p376/gems/railties-3.0.0.beta3/lib/rails/commands/console.rb:8:in `start'
-	from /Users/michael/.rvm/gems/ruby-1.9.1-p376/gems/railties-3.0.0.beta3/lib/rails/commands.rb:34:in `<top (required)>'
-	from script/rails:9:in `require'
-	from script/rails:9:in `<main>'
-	
-	
-	
-# this works
-irb(main):001:0> FacetCategory
-=> FacetCategory
-irb(main):002:0> Collection[1]
-=> #<Collection:1 name="10" uri="http://localhost:3000/countries" facet_categories=#<Set (FacetCategory): [#<FacetCategory:1 name="Languages Spoken" type="string">]>>
-
-
-
 Requirements:
-
+======================
 Envision is developed and tested against Ruby (1.9.1) and Rails (3.0.0-beta3)

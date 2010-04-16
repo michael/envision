@@ -1,3 +1,5 @@
+Facet # kick start necessary due to rails lazy loading of models
+
 # An item corresponds to a property value in Freebase
 class Item < Ohm::Model
   attribute :name

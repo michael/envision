@@ -1,3 +1,5 @@
+FacetCategory ; Item # kick start necessary due to rails lazy loading of models
+
 class Collection < Ohm::Model
   attribute :name
   attribute :descr

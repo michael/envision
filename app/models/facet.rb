@@ -1,3 +1,5 @@
+FacetCategory ; FacetValue # kick start necessary due to rails lazy loading of models
+
 # A Facet Category corresponds to Property Value in Freebase
 class Facet < Ohm::Model
   attribute :name
