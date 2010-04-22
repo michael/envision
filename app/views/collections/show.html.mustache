@@ -1,0 +1,34 @@
+{{#collection}}
+  <h2>{{name}}</h2>
+  <p>{{descr}}</p>
+  
+  <h3>Properties</h3>
+  <ul>
+    {{#properties}}
+      <li>{{name}}</li>
+    {{/properties}}
+  </ul>
+  
+  <h3>Items</h3>
+  <ul>
+  {{#items}}
+    <li>
+      {{name}}
+      <ul>
+        {{#attributes}}
+          <li>
+            {{#property}}
+              {{name}}
+            {{/property}}
+          
+            {{#values}}
+              {{value}}
+              ({{id}})
+            {{/values}}
+          </li>
+        {{/ attributes}}
+      </ul>
+    </li>
+  {{/items}}
+  </ul>
+{{/collection}}
