@@ -1,12 +1,5 @@
-Property ; Value # kick start necessary due to rails lazy loading of models
-
-# A Facet Category corresponds to Property Value in Freebase
-class Attribute < Ohm::Model
-  attribute :name
-  
-  reference :property, Property
-  set :values, Value
-  
-  def validate
-  end
+class Attribute < Envision::Model  
+  belongs_to :item, Item
+  belongs_to :property, Property
+  has_many :values, Value
 end

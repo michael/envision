@@ -1,16 +1,13 @@
-Attribute # kick start necessary due to rails lazy loading of models
-
-class Item < Ohm::Model
-  attribute :name
-  attribute :img # a reference to an image
-  attribute :descr
-  attribute :href
+class Item < Envision::Model
+  field :name, :index => true
+  field :img
+  field :descr
+  field :href
   
-  set :attributes, Attribute
+  belongs_to :collection, Collection
+  has_many :attributes, Attribute
+  
+  def matches_criteria?(criteria)
     
-  index :name
-  
-  def validate
-    assert_present :name
   end
 end

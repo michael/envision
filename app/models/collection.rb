@@ -1,21 +1,48 @@
-Property ; Item ; Attribute # kick start necessary due to rails lazy loading of models
+require 'net/http'
+require 'json'
+require 'uri'
 
-class Collection < Ohm::Model
-  attribute :name
-  attribute :descr
-  attribute :uri
+class Collection < Envision::Model
+  field :name, :index => true
+  field :descr
+  field :uri
   
-  set :properties, Property
-  set :items, Item
+  has_many :properties, Property
+  has_many :items, Item
   
-  index :name
-  
-  def validate
-    assert_present :name
+  # loads the collection by fetching it from the given uri
+  def load
+    response = Net::HTTP.get_response(URI.parse(uri)).body
+    data = JSON.parse(response)
+    
+    props = {}
+    data["properties"].each do |pkey, p|
+      props[pkey] = Property.new(:name => p["name"], :type => "string")
+      props[pkey].collection = self
+      props[pkey].save
+    end
+    
+    data["items"].each do |i|
+      item = Item.new(:name => i["name"])
+      item.collection = self
+      item.save
+      i["attributes"].each do |a|
+        attrib = Attribute.new
+        attrib.item = item
+        attrib.property = props[a["property"]]
+        attrib.save
+        a["values"].each do |v|
+          val = Value.new
+          val.value = v["value"]
+          val.attribute = attrib
+          val.save
+        end
+      end
+    end
   end
   
-  # TODO: loads the collection by fetching it from the given uri
-  def load
-    
+  # clearing up the collection
+  def clear
+
   end
 end

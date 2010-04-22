@@ -1,9 +1,12 @@
+<p>
+  <% @response %>
+</p>
 <h1><%= @collection.name %></h1>
 <p><%= @collection.descr %></p>
 
 <h3>Properties</h3>
 <ul>
-  <% @collection.properties.each do |p| %>#
+  <% @collection.properties.each do |p| %>
     <li><%= p.name %></li>
   <% end %>
 </ul>
@@ -16,7 +19,7 @@
     <%= item.name %>
     <ul>
       <% item.attributes.each do |a| %>
-        <li><%= a.property.name %>: <% a.values.map { |v| v.value }.join(", ") %></li>
+        <li><%= a.property.name %>: <%= a.values.map { |v| "#{v.value} (#{v.id})" }.join(", ") %></li>
       <% end %>
     </ul>
   </li>

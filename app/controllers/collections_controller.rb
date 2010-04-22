@@ -1,9 +1,12 @@
 class CollectionsController < ApplicationController
   def index
-    @collections = Collection.find({}) # find all
+    @collections = Collection.all
   end
   
   def show
-    @collection = Collection[params[:id]]
+    Collection.redis.flushdb
+    @collection = Collection.create(:name => "World's countries", :uri => "http://localhost:4567/countries")
+    # @collection = Collection.get(params[:id])
+    @collection.load
   end
 end
