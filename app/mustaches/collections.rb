@@ -19,8 +19,8 @@ module Collections
       context[:_collection]
     end
     
-    def property_name(doink)
-      self.class.to_s
+    def browsing_session
+      context[:_browsing_session]
     end
   end
 end

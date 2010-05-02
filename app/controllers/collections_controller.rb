@@ -5,8 +5,7 @@ class CollectionsController < ApplicationController
   
   def show
     Collection.redis.flushdb
-    @collection = Collection.create(:name => "World's countries", :uri => "http://localhost:4567/countries")
-    # @collection = Collection.get(params[:id])
+    @collection = Collection.create(:name => "Canon Turnover Report", :uri => "http://localhost:4567/canon_turnover_report")
     @collection.load
   end
 end

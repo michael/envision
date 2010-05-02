@@ -1,6 +1,7 @@
 Envision::Application.routes.draw do |map|
   resources :collections
   
+  match 'collections/:collection_id/browse' => 'browsing_sessions#browse', :as => :browse
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

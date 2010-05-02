@@ -199,13 +199,10 @@ module Envision
       prev = r.model.get(redis.get(key(id, :associations, name)))
 
       if (prev != obj) # reference has changed
-        
         redis.set(key(id, :associations, name), obj.id)
-
         if (prev) # remove obsolete back link
           redis.lrem(prev.key(prev.id, :associations, self.class.to_s.tableize), 0, self.id)
         end
-      
         redis.rpush(obj.key(obj.id, :associations, self.class.to_s.tableize), self.id)
       end
     end

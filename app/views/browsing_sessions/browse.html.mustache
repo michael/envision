@@ -1,0 +1,56 @@
+{{#browsing_session}}
+  
+  {{#collection}}
+    <section id="search">
+      <input type="text" name="searchstr"/>
+    </section>
+    
+    <section id="trail">
+      <h2>{{item_count}} Items / {{name}}</h2>
+    </section>
+    
+    <section id="facets">
+      <form action="/collections/{{id}}/browse" method="get">
+      {{#facets}}
+        <h3>{{name}}</h3>
+        {{#property}}
+        <select multiple="multiple" name="criteria[{{id}}][]">
+        {{/property}}
+          {{#facet_choices}}
+            <option value="{{value}}">{{value}} {{item_count}}</option>
+          {{/facet_choices}}
+        </select>
+      {{/facets}}
+      <input type="submit" name="submit_filter_criteria">
+    </section>
+  {{/collection}}
+  <section id="results">
+    
+  <h2>Criteria: {{criteria}}</h2>
+  
+  <ul>
+  {{#items}}
+    <li>
+      {{name}}
+      <ul>
+        {{#attributes}}
+          <li>
+            {{#property}}
+              {{name}}
+            {{/property}}
+        
+            {{#values}}
+              {{value}}
+              ({{id}})
+            {{/values}}
+          </li>
+        {{/ attributes}}
+      </ul>
+    </li>
+  {{/items}}
+  </ul>
+  </section>
+  
+{{/browsing_session}}
+
+</section>

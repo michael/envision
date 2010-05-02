@@ -2,12 +2,14 @@
   <h2>{{name}}</h2>
   <p>{{descr}}</p>
   
-  <h3>Properties</h3>
-  <ul>
-    {{#properties}}
-      <li>{{name}}</li>
-    {{/properties}}
-  </ul>
+  {{#properties}}
+    <h3>{{name}}</h3>
+    <select multiple="multiple">
+      {{#unique_values}}
+        <option value="{{to_s}}">{{to_s}}</option>
+      {{/unique_values}}
+    </select>
+  {{/properties}}
   
   <h3>Items</h3>
   <ul>

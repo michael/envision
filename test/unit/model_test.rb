@@ -31,7 +31,6 @@ class ItemTest < ActiveSupport::TestCase
     assert @item.attributes.length == 0 #, "must not have assigned attributes"
     assert @item_2.attributes.length == 1 #, "must have one assigned attribute"
     @item = Item.get(@item.id) # reload item
-    # puts @item.attributes.first.inspect
   end
   
   test "list all items" do

@@ -13,7 +13,11 @@ class Collection < Envision::Model
   # loads the collection by fetching it from the given uri
   def load
     response = Net::HTTP.get_response(URI.parse(uri)).body
-    data = JSON.parse(response)
+    load_from_json(response)
+  end
+  
+  def load_from_json(raw_json)
+    data = JSON.parse(raw_json)
     
     props = {}
     data["properties"].each do |pkey, p|
