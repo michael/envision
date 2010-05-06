@@ -11,7 +11,7 @@ var Templates = {
       <h3>{{property}}</h3> \
       <ul> \
         {{#facet_choices}} \
-          <li><a class="facet-choice" href="{{property}}">{{value}}</a></li> \
+          <li><a class="facet-choice" href="{{property}}">{{value}}</a> ({{item_count}})</li> \
         {{/facet_choices}} \
       </ul> \
     {{/facets}}',
@@ -81,9 +81,9 @@ var Client = {
       facets: {
         facets: function() {
           result = []
-          $.each(facets, function(key, facet_choices) {
+          $.each(facets, function(key, choices) {
             result.push({property: key, facet_choices: function() {
-              return $.map(facet_choices, function(fc) { return {value: fc} });
+              return $.map(choices, function(fc) { return {value: fc.value, item_count: fc.item_count} });
             }});
           });
           return result;

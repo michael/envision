@@ -45,7 +45,7 @@ class BrowsingSession
     end
     
     facets.each do |f|
-      result[:facets][f.property.id.to_s] = f.facet_choices.map { |fc| fc.value }
+      result[:facets][f.property.id.to_s] = f.facet_choices.map { |fc| {:value => fc.value, :item_count => fc.item_count} }
     end
     
     JSON.pretty_generate(result)
