@@ -10,6 +10,8 @@ class Collection < Envision::Model
   has_many :properties, Property
   has_many :items, Item
   
+  has_many :views, View
+  
   # loads the collection by fetching it from the given uri
   def load
     response = Net::HTTP.get_response(URI.parse(uri)).body
@@ -21,7 +23,7 @@ class Collection < Envision::Model
     
     props = {}
     data["properties"].each do |pkey, p|
-      props[pkey] = Property.new(:name => p["name"], :type => "string")
+      props[pkey] = Property.new(:name => p["name"], :type => p["type"] || "string")
       props[pkey].collection = self
       props[pkey].save
     end

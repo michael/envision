@@ -22,5 +22,4 @@ class FilterCriteria
   def method_missing(name, *args)
     @criteria.send(name, *args)
   end
-  
 end

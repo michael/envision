@@ -22,8 +22,4 @@ class PropertyTest < ActiveSupport::TestCase
     assert @property.name == "Languages spoken"
   end
   
-  test "unique_values" do
-    puts @property.unique_values.inspect
-  end
-  
 end
