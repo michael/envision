@@ -19,6 +19,8 @@ h2 { font-size: 19px; color: #3a3227; text-transform: uppercase; padding: 5px 5p
 h3 { font-size: 15px; color: #3a3227; text-transform: uppercase; padding: 0px; margin: 0px; }
 
 
+canvas#chart {width: 700px; height: 500px;}
+
 /*
 -----------------------------------------
  Header
