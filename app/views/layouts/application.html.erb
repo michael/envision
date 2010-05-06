@@ -4,17 +4,22 @@
   <title>ENVISION / A Collection Browser</title>
   <%= stylesheet_link_tag :all %>
   <%= csrf_meta_tag %>
+  <script src="/javascripts/jquery-1.4.2.min.js"></script>
+  <script src="/javascripts/mustache.js"></script>
+  <script src="/javascripts/jquery-ui-1.8.custom.min.js"></script>
+  <script src="/javascripts/processing-0.8-patched.js"></script>
+  <script src="/javascripts/collection.js"></script>
+  <script src="/javascripts/chart.js"></script>
+  
+  <%= yield :head %> 
 </head>
 <body>
 <div id="wrapper">
   <section id="header">
     <h1>ENVISION&#8482;</h1>
     <p>A Collection Navigator</p>
-  
   </section>
-
   <%= yield %>
-
 </div>
 </body>
 </html>
