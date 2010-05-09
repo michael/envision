@@ -4,7 +4,6 @@ class Property < Envision::Model
   
   belongs_to :collection, Collection
   
-  
   def number?
     type == "number"
   end

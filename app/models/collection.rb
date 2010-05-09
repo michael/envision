@@ -9,7 +9,6 @@ class Collection < Envision::Model
   
   has_many :properties, Property
   has_many :items, Item
-  
   has_many :views, View
   
   # loads the collection by fetching it from the given uri
@@ -31,19 +30,15 @@ class Collection < Envision::Model
     data["items"].each do |i|
       item = Item.new(:name => i["name"])
       item.collection = self
-      item.save
+      
+      attrs = {}
       i["attributes"].each do |a|
-        attrib = Attribute.new
-        attrib.item = item
-        attrib.property = props[a["property"]]
-        attrib.save
-        a["values"].each do |v|
-          val = Value.new
-          val.value = v["value"]
-          val.attribute = attrib
-          val.save
-        end
+        property_id = props[a["property"]].id
+        attrs[property_id] = a["values"].map {|v| v["value"]}      
       end
+      
+      item.raw_attributes = attrs.to_json
+      item.save
     end
   end
   

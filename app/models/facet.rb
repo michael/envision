@@ -1,5 +1,6 @@
 class Facet
   attr_accessor :property
+  
   def initialize(property)
     @property = property
   end

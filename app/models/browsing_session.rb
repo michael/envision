@@ -6,15 +6,21 @@ class BrowsingSession
     @collection, @filter_criteria = collection, filter_criteria
   end
   
-  # construct facets with facet_choices
+  # construct facets based on filtered subset of items
   def facets
     facets = {}
+    
+    props = {}
+    @collection.properties.each { |p| props[p.id] = p }
+    
     items.each do |item|
-      item.attributes.each do |a|
-        p = a.property
+      item.attributes.each do |property_id, a|
+        p = props[property_id]
         if (!p.number?)
-          facets[p.name] ||= Facet.new(p)
-          a.values.each { |v| facets[p.name].register_value(v.value, item) }
+          facets[property_id] ||= Facet.new(p)
+          a.each { |v| 
+            facets[property_id].register_value(v, item)
+          }
         end
       end
     end
@@ -38,8 +44,8 @@ class BrowsingSession
     
     items.each do |i|
       item = {}
-      i.attributes.each do |a|
-        item[a.property.id] = a.raw_values.first
+      i.attributes.each do |key, a|
+        item[key] = a.first
       end
       result[:items] << item
     end

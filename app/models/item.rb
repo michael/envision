@@ -4,22 +4,27 @@ class Item < Envision::Model
   field :descr
   field :href
   
-  belongs_to :collection, Collection
-  has_many :attributes, Attribute
+  field :raw_attributes
   
-  def attribute(property)
-    attributes.select {|a| a.property.id == property.id}.first
+  belongs_to :collection, Collection
+  
+  def attributes
+    @attributes ||= JSON.parse(raw_attributes || "{}")
   end
   
-  def values
-    attributes.inject([]) { |values, a| values.concat(a.values) }
+  def attribute(property_id)
+    attributes[property_id]
+  end
+  
+  def values(property_id)
+    attributes[property_id]
   end
   
   def matches_criteria?(filter_criteria)
     filter_criteria.each do |criterion|
-      a = attribute(criterion.property)
+      a = attribute(criterion.property.id)
       return false unless a
-      return false if a && !a.raw_values.any? {|i| criterion.values.include?(i)}
+      return false if a && !a.any? {|i| criterion.values.include?(i)}
     end
     return true
   end
