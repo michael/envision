@@ -4,11 +4,14 @@
 //-----------------------------------------------------------------------------
 
 var Collection = function(options) {
+  this.id = options.id;
+  this.name = options.name;
   
   this.properties = {};
   this.items = [];
-  
+
   var that = this;
+  
   // init properties
   $.each(options.properties, function(key, options) {
     that.properties[key] = new Property(that, key, options);
@@ -18,7 +21,6 @@ var Collection = function(options) {
   $.each(options.items, function(index, attributes) {
     that.items.push(new Item(that, attributes));
   });
-  
 };
 
 Collection.prototype = {
@@ -40,8 +42,7 @@ Collection.get = function(href) {
   });
   
   return result;
-}
-
+};
 
 //-----------------------------------------------------------------------------
 // Item
@@ -49,7 +50,7 @@ Collection.get = function(href) {
 
 var Item = function(chart, attributes) {
   this.attributes = attributes;
-}
+};
 
 
 //-----------------------------------------------------------------------------
@@ -63,4 +64,4 @@ var Property = function(chart, key, options) {
   this.key = key;
   this.name = options.name;
   this.type = options.type; // not used yet.
-}
+};

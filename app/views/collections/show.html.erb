@@ -7,6 +7,9 @@
 </section>
 
 <section id="trail">
+  <% @collection.views.each do |v| %>
+    <a class="view" href="<%= collection_view_path(@collection.id, v.id)%>"><%= v.name %></a>
+  <% end %>
   
 </section>
 
@@ -15,5 +18,5 @@
 </section>
 
 <section id="results">
-    <canvas id="chart"></canvas>
+    
 </section>

@@ -7,7 +7,15 @@ class View < Envision::Model
   
   belongs_to :collection, Collection
   
-  # has_many :categories
-  # has_many :measures
+  list :measures
   
+  def to_json
+    result = {
+      :id => id,
+      :collectionId => collection.id,
+      :name => name,
+      :measures => measures
+    }
+    JSON.pretty_generate(result)
+  end
 end

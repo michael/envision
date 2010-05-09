@@ -18,8 +18,19 @@ var Templates = {
   items: ' \
     {{#items}} \
       aa{{.}} \
-    {{/items}}'
+    {{/items}}',
+  view: ' \
+    <canvas id="chart"></canvas> \
+    <div id="view-settings"> \
+      measures: \
+      <select id="measures" multiple="multiple" name="measures[]"> \
+        {{#properties}} \
+          <option {{#selected}}selected="selected"{{/selected}} value="{{key}}">{{name}}</option> \
+        {{/properties}} \
+      </select> \
+    </div>'
 }
+
 
 //-----------------------------------------------------------------------------
 // FilterCriteria
@@ -45,6 +56,85 @@ FilterCriteria.prototype = {
 }
 
 var filters = new FilterCriteria();
+
+
+//-----------------------------------------------------------------------------
+// View
+// Reflects settings needed for drawing a chart
+// Renders the view to the result pane
+//-----------------------------------------------------------------------------
+
+var View = function(collection, options) {
+  this.collection = collection;
+  this.measures = [];
+  this.id = options.id;
+  this.collectionId = options.collectionId;
+  var that = this;
+  
+  // init measures
+  $.each(options.measures, function(index, property) {
+    that.measures.push(property);
+  });
+}
+
+View.prototype = {
+  update: function() {
+    this.measures = $('select#measures').val() || [];
+    var that = this;
+    
+    this.renderChart();
+    
+    // store view changes on the server
+    $.ajax({
+      url: '/collections/'+this.collectionId+'/views/'+this.id+'.json',
+      type: 'put',
+      data: { measures: that.measures },
+      success: function(json) {
+        console.log("measures updated");
+      }
+    });
+  },
+  render: function() {
+    var that = this;
+    
+    var v = {
+      properties: function() {
+        var result = [];
+        
+        $.each(that.collection.properties, function(key, p) {
+          if (p.type === "number") {
+            
+            result.push({key: key, name: p.name, selected: $.inArray(key, that.measures) > -1});
+          }
+        });
+        return result;
+      }
+    };
+
+    $('#results').html($.mustache($.template('view'), v));
+    $('select#measures').change(function() {
+      that.update();
+    });
+    
+    that.renderChart();
+  },
+  renderChart: function() {
+    // quick and dirty scatter plot
+    // let the chart decide if it's able to render measures.length measures
+    if (this.measures.length >= 2) {
+      $('#chart').chart('destroy');
+      $('#chart').chart({
+          collection: this.collection,
+          plotOptions: {
+            plotType: 'scatter',
+            categorizeBy: 'gender',
+            identifyBy: 'name',
+            measures: this.measures
+          }
+      });
+    }
+  }
+}
 
 //-----------------------------------------------------------------------------
 // Mustache stuff
@@ -72,6 +162,7 @@ var Client = {
   updateCollection: function(json) {
     var collection = new Collection(json);
     var facets = json.facets;
+    var view = null;
     
     var Views = {
       items: {
@@ -111,6 +202,21 @@ var Client = {
       return false;
     });
     
+    // views
+    $('a.view').click(function() {
+      
+      $.ajax({
+        url: $(this).attr('href'),
+        dataType: 'json',
+        success: function(viewOptions) {
+          view = new View(collection, viewOptions);
+          view.render();
+        }
+      });
+      
+      return false;
+    });
+    
     // attach events
     $('a.clear-filters').click(function() {      
       filters.clear();
@@ -125,19 +231,6 @@ var Client = {
       
       return false;
     });
-    
-    // quick and dirty scatter plot
-    // TODO: un-hardcode measures!
-    $('#chart').chart('destroy');
-    $('#chart').chart({
-        collection: collection,
-        plotOptions: {
-          plotType: 'scatter',
-          categorize_by: 'gender',
-          identify_by: 'name',
-          measures: ['2', '7']
-        }
-     });
   }
 }
 

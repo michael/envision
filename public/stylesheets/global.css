@@ -19,7 +19,7 @@ h2 { font-size: 19px; color: #3a3227; text-transform: uppercase; padding: 5px 5p
 h3 { font-size: 15px; color: #3a3227; text-transform: uppercase; padding: 0px; margin: 0px; }
 
 
-canvas#chart {width: 700px; height: 500px;}
+
 
 /*
 -----------------------------------------
@@ -58,7 +58,11 @@ section#facets { background: #fff; position: absolute; top: 105px; bottom: 0px; 
 -----------------------------------------
 */
 
-section#results { background: #fff; position: absolute; left: 325px; top: 105px; bottom: 0px; padding: 10px; overflow: auto; }
+section#results { background: #fff; position: absolute; left: 325px; top: 105px; bottom: 0px; right: 0px; padding: 10px; overflow: auto; }
+
+canvas#chart { width: 700px; height: 500px; float: left; }
+
+section#results #view-settings { background: #eee; float: right; width: 200px;}
 
 /*
 -----------------------------------------
