@@ -4,6 +4,7 @@
 # the brandnew redis hash datastructure and adds
 # basic support for associations
 # no more json serialization
+# New: support for redis list data structure
 ###################################################
 # 
 # Usage:
@@ -12,7 +13,9 @@
 # class User < Envision::Model
 #   field :name
 #   field :email, :index => true
-#   
+#
+#   list :nick_names
+#
 #   has_many :addresses, Address
 # end
 
@@ -78,11 +81,19 @@ module Envision
     def self.fields
       @fields ||= [:id]
     end
+    
+    def self.list_fields
+      @list_fields ||= []
+    end
   
     def self.relationships
       @relationships ||= {}
     end
-  
+    
+    def self.list(list_name)
+      list_fields << list_name
+    end
+    
     def self.field(field, options = {})
       fields << field unless fields.include?(field)
       index(field) if options[:index]
@@ -153,7 +164,10 @@ module Envision
     
       load_fields(fields)
       @associations = {}
+      @lists = {}
+      
       setup_associations
+      setup_lists
     end
   
     def load_fields(fields)
@@ -161,7 +175,22 @@ module Envision
         send "#{key}=", value
       end
     end
-  
+    
+    def setup_lists
+      self.class.list_fields.each do |list_field|
+        # list getter
+        self.class.send(:define_method, list_field) do
+          @lists[list_field] ||= fetch_list(list_field)
+        end
+
+        # list setter
+        self.class.send(:define_method, "#{list_field}=") do |l|
+          @lists[list_field] = l
+        end
+      end
+      
+    end
+    
     def setup_associations
       self.class.relationships.each do |name, r|
         if (r.type == :reference)
@@ -194,16 +223,35 @@ module Envision
         res
       end
     end
-  
+    
+    def fetch_list(name)
+      redis.lrange(key(id, :lists, name), 0, -1)
+    end
+    
+    
+    # @param name [Symbol,String] Relationship name
+    # @param relationship [Model::Relationship] Relationship instance
+    # @param obj [Object] target object
+    # TODO: optimize (too many if-then-else cascades)
     def store_reference(name, r, obj)
       prev = r.model.get(redis.get(key(id, :associations, name)))
-
+      
       if (prev != obj) # reference has changed
-        redis.set(key(id, :associations, name), obj.id)
+        
+        if (obj) # don't store nil reference
+          redis.set(key(id, :associations, name), obj.id)
+        elsif(prev)
+          # remove reference if existent
+          redis.del(key(prev.id, :associations, name))
+        end
+        
         if (prev) # remove obsolete back link
           redis.lrem(prev.key(prev.id, :associations, self.class.to_s.tableize), 0, self.id)
         end
-        redis.rpush(obj.key(obj.id, :associations, self.class.to_s.tableize), self.id)
+        
+        if (obj) # don't store back links for nil references
+          redis.rpush(obj.key(obj.id, :associations, self.class.to_s.tableize), self.id)
+        end
       end
     end
   
@@ -223,10 +271,20 @@ module Envision
         self.class.indices.each do |index|
           redis.hset(key(:indices, index), send(index), id)
         end
-      
+        
+        # save lists
+        self.class.list_fields.each do |list_field|
+          redis.del(self.key(self.id, :lists, list_field))
+          
+          self.send(list_field).each do |item|
+            redis.rpush(self.key(self.id, :lists, list_field), item)
+          end
+        end
+              
         # update references
         self.class.relationships.select {|k,r| r.type == :reference }.each do |name, r|
-          @associations[name] ||= fetch_association(name, r)
+          # fetch association if it hasn't been set explicitly
+          @associations[name] = fetch_association(name, r) unless @associations.has_key?(name)
           store_reference(name, r, @associations[name])
         end
         
@@ -238,6 +296,38 @@ module Envision
         false
       end
       
+    end
+    
+    # checks if the obj has any incoming references
+    def is_referenced?
+      self.class.relationships.select {|k,r| r.type == :collection }.each do |name, r|
+        return true if self.send(name).length > 0
+      end
+      false
+    end
+    
+    # removes all outgoing references
+    def remove_outgoing_references
+      self.class.relationships.select {|k,r| r.type == :reference }.each do |name, r|
+        @associations[name] = nil
+        store_reference(name, r, @associations[name])
+      end
+    end
+    
+    def destroy
+      # stop if the obj has incoming references
+      return false if is_referenced?
+      
+      remove_outgoing_references
+      
+      # remove the object
+      redis.del(key(id))
+      
+      # remove obj from the all list
+      redis.lrem(key(:all), 0, self.id)
+      @saved = false
+      
+      return true
     end
 
     def id
