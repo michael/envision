@@ -10,94 +10,6 @@ $(function() {
     tinylog.log = Processing(c, function(p) {}).println
 });
 
-
-//-----------------------------------------------------------------------------
-// Plotters
-//-----------------------------------------------------------------------------
-
-var ScatterPlotter = {
-  // this refers to the chart
-  plot: function(p) {
-    
-    p.background(255);
-    p.smooth();
-    
-    // center the plotarea
-    p.translate(this.margin.left, this.margin.top);
-    
-    // color for the plot area
-    p.fill(244);
-    p.rect(0,0,this.plotWidth(), this.plotHeight());
-    
-    var font = p.loadFont("Century Gothic"); 
-    p.textFont(font, 12); 
-    
-    // measure #1 is my xAxis
-    var xAxis = this.measures[0];
-    xAxis.setTargetRange(this.plotWidth());
-    
-    // measure #2 is my yAxis
-    var yAxis = this.measures[1];
-    yAxis.setTargetRange(this.plotHeight());
-    
-    // everything alright?
-    $.each(this.measures, function(i, measure) {
-      // tinylog.log(measure.inspect());
-    });
-
-    // draw xAxis
-    for(var i = 0; i < xAxis.nTicks; i++) {
-      p.fill(66);
-      var x = xAxis.translate(i*xAxis.tickInterval+xAxis.graphMin);
-      x += 0.5; // needs to be shifted for some reason (probably caused by the PJS patch)
-      
-      // TODO: only show nFrac fractional digits
-      p.text(xAxis.graphMin+i*xAxis.tickInterval, x-10, this.plotHeight()+20);
-      
-      p.stroke(180);
-      p.strokeWeight(1);
-      p.line(x, 0, x, this.plotHeight());
-      p.strokeWeight(0);
-    }
-    
-    // draw yAxis
-    for(var i = 0; i<yAxis.nTicks; i++) {
-      p.fill(66);
-      var y = this.plotHeight()-yAxis.translate(i*yAxis.tickInterval+yAxis.graphMin);
-      y += 0.5; // needs to be shifted for some reason (probably caused by the PJS patch)
-  
-      // TODO: only show nFrac fractional digits
-      p.text(yAxis.graphMin+i*yAxis.tickInterval, -40, y);
-      
-      p.stroke(180);
-      p.strokeWeight(1);
-      p.line(0, y, this.plotWidth(), y);
-      p.strokeWeight(0);
-    }
-    
-    // plot some dots
-    // var color = p.color.apply(p,Chart.COLORS[this.index])
-    var that = this;
-    p.fill(44);
-    
-    $.each(this.collection.items, function(i, item) {
-      var x = xAxis.translate(item.attributes[xAxis.property.key]);
-      var y = that.plotHeight()-yAxis.translate(item.attributes[yAxis.property.key]);
-      p.ellipse(x, y, 7, 7);
-    });
-    
-    p.exit();
-  },
-  // this refers to the measure object
-  plotItem: function(p) {
-    
-  },
-  // this refers to the measure object
-  plotMeasure: function(p) {
-    
-  }
-}
-
 //-----------------------------------------------------------------------------
 // Utility Functions
 //-----------------------------------------------------------------------------
@@ -139,35 +51,31 @@ var Chart = function Chart(element, options) {
   this.height = element.height();
   this.width = element.width();
   this.collection = options.collection;
-
+  
+  // TODO: use extracted groupKeys for identification if no identityKeys are provided
+  this.identityKeys = options.plotOptions.identifyBy || [];
+  this.groupKeys = options.plotOptions.groupBy || [];
   this.measures = [];
   this.margin = {top: 50, right: 50, bottom: 60, left: 80};
-  
   var that = this;
   
+  if (options.plotOptions.aggregate) {
+    this.groupProperties = $.map(options.plotOptions.measures, function(k) {  return {property: k, aggregator: Aggregators.SUM}; });
+    
+    this.collection = this.collection.group({
+      keys: this.groupKeys,
+      properties: this.groupProperties
+    });
+  }
+  // TODO: skip if there are no groupKeys provided
+  this.groups = this.collection.getGroups(this.groupKeys);
+  
   // init measures
-  $.each(options.plotOptions.measures, function(index, propertyKey) {
-    that.measures.push(new Measure(that, that.collection.properties[propertyKey]));
+  $.each(options.plotOptions.measures, function(i, propertyKey) {
+    that.measures.push(new Measure(that, that.collection.properties[propertyKey], i));
   });
 }
 
-
-Chart.COLORS = [
-  [177, 102, 73],
-  [171, 199, 49],
-  [128, 142, 137],
-  [131, 127, 67],
-  [171, 199, 49],
-  [144, 150, 60],
-  [134, 162, 169],
-  [162, 195, 85],
-  [154, 191, 123],
-  [147, 186, 161],
-  [141, 181, 200],
-  [177, 102, 73],
-  [122, 122, 104],
-  [157, 175, 55]
-];
 
 Chart.prototype = {
   plotHeight: function() {
@@ -176,23 +84,14 @@ Chart.prototype = {
   plotWidth: function() {
     return this.width-(this.margin.left+this.margin.right);
   },
-  addSeries: function(series) {
-    this.series.push(series);
-  },
   render: function() {
-    var elem = this.element;
+    var plotter = new Chart.Plotters.Scatter(this);
+    plotter.plot();
+  },
+  // returns an items identity as a string based on this.identityKeys
+  identify: function(item) {
     var that = this;
-    var pjs_code = function(p) {
-  		p.setup = function() {
-  			p.size(elem.width(), elem.height());
-  			p.noStroke();
-  			p.frameRate(60);
-  		}
-    
-      p.draw = function() { ScatterPlotter.plot.apply(that, [p]); }
-      p.init();
-    };
-    this.processingControl = Processing(this.element[0], pjs_code);
+    return $.map(this.identityKeys, function(s) { return item.attributes[s] }).join(", ");
   }
 }
 
@@ -202,21 +101,19 @@ Chart.prototype = {
 //-----------------------------------------------------------------------------
 
 // a measure is one dimension of the data item to be plotted.
-var Measure = function(chart, property) {
+var Measure = function(chart, property, index) {
   this.property = property;
   this.chart = chart;
-  
+  this.index = index;
   this.dataMin = Infinity;
   this.dataMax = -Infinity;
   
   this.targetRange = undefined;
-  
   // TODO: user set min/max
   
   // set min and max, tickInterval, scale etc.
   this.update();
 }
-
 
 Measure.prototype = {
   // getter/setter
@@ -230,7 +127,8 @@ Measure.prototype = {
     this.computeLooseTicks(this.dataMin, this.dataMax, 5);
     this.setScale();
   },
-  // translates the given data value to the corresponding pixel value
+  // translates the given data value to the corresponding
+  // value in the targetRange
   translate: function(value) {
     // CAUTION: not sure if -this.graphMin should go here
     return Math.round((value-this.graphMin)*this.scale);
