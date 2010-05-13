@@ -17,7 +17,9 @@ class ViewsController < ApplicationController
   
   def update
     @view = View.get(params[:id])
-    @view.measures = params[:measures]
+    @view.measures = params[:measure_keys]
+    @view.identity_keys = params[:identity_keys]
+    @view.group_keys = params[:group_keys]
     @view.save
     render :json => "{status: 'ok'}"
   end
