@@ -62,7 +62,7 @@ section#results { background: #fff; position: absolute; left: 325px; top: 105px;
 
 canvas#chart { width: 700px; height: 500px; float: left; }
 
-section#results #view-settings { background: #eee; float: right; width: 200px;}
+section#results #view-settings { background: #eee; float: right; width: 190px;}
 
 /*
 -----------------------------------------
