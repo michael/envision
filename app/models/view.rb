@@ -8,13 +8,17 @@ class View < Envision::Model
   belongs_to :collection, Collection
   
   list :measures
+  list :identity_keys
+  list :group_keys
   
   def to_json
     result = {
       :id => id,
       :collectionId => collection.id,
       :name => name,
-      :measures => measures
+      :measures => measures,
+      :identity_keys => identity_keys,
+      :group_keys => group_keys
     }
     JSON.pretty_generate(result)
   end
