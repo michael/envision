@@ -11,7 +11,8 @@ class FilterCriteria
   def initialize(criteria_list = {})
     @criteria = []
     criteria_list.each do |p, v|
-      @criteria << FilterCriterion.new(Property.get(p), v)
+      prop = Property.get(p)
+      @criteria << FilterCriterion.new(prop, v) if prop
     end
   end
   
