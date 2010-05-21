@@ -16,13 +16,15 @@ class Item < Envision::Model
     attributes[property_id]
   end
   
+  # returns all attributes values
   def values(property_id)
-    attributes[property_id]
+    attributes[property_id].to_a
   end
   
   def matches_criteria?(filter_criteria)
     filter_criteria.each do |criterion|
       a = attribute(criterion.property.id)
+      a = [a] unless a.kind_of?(Array)
       return false unless a
       return false if a && !a.any? {|i| criterion.values.include?(i)}
     end

@@ -1,3 +1,5 @@
+require 'json'
+
 # A BrowsingSession operates on a Collection
 # It contains a set of possibly filtered items and facets that are derived from it
 class BrowsingSession
@@ -9,18 +11,17 @@ class BrowsingSession
   # construct facets based on filtered subset of items
   def facets
     facets = {}
-    
     props = {}
+    
     @collection.properties.each { |p| props[p.id] = p }
     
     items.each do |item|
       item.attributes.each do |property_id, a|
+        a.kind_of?(Array) ? values = a : values = [a]
         p = props[property_id]
         if (!p.number?)
           facets[property_id] ||= Facet.new(p)
-          a.each { |v| 
-            facets[property_id].register_value(v, item)
-          }
+          values.each { |v| facets[property_id].register_value(v, item) }
         end
       end
     end
@@ -36,7 +37,14 @@ class BrowsingSession
   end
   
   def to_json
-    result = {:properties => {}, :items => [], :facets => {} }
+    result = {
+      :properties => {},
+      :items => [],
+      :facets => {},
+      :collection_id => @collection.id,
+      :uri => @collection.uri,
+      :default_view => @collection.views.first.to_hash
+    }
     
     @collection.properties.each do |p|
       result[:properties][p.id] = {:name => p.name, :type => p.type, :unique => true}
@@ -45,7 +53,7 @@ class BrowsingSession
     items.each do |i|
       item = {}
       i.attributes.each do |key, a|
-        item[key] = a.first
+        item[key] = a
       end
       result[:items] << item
     end

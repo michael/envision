@@ -20,6 +20,8 @@ class ViewsController < ApplicationController
     @view.measures = params[:measure_keys]
     @view.identity_keys = params[:identity_keys]
     @view.group_keys = params[:group_keys]
+    @view.visualization = params[:visualization]
+    @view.aggregated = params[:aggregated]
     @view.save
     render :json => "{status: 'ok'}"
   end

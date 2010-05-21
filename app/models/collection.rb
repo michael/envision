@@ -19,7 +19,6 @@ class Collection < Envision::Model
   
   def load_from_json(raw_json)
     data = JSON.parse(raw_json)
-    
     props = {}
     data["properties"].each do |pkey, p|
       props[pkey] = Property.new(:name => p["name"], :type => p["type"] || "string")
@@ -28,20 +27,20 @@ class Collection < Envision::Model
     end
     
     data["items"].each do |i|
-      item = Item.new(:name => i["name"])
+      item = Item.new(:name => i["name"] || "Untitled")
       item.collection = self
       
+      # remaining attributes
       attrs = {}
-      i["attributes"].each do |a|
-        property_id = props[a["property"]].id
-        attrs[property_id] = a["values"].map {|v| v["value"]}      
+      i.each do |key, a|
+        property_id = props[key].id
+        attrs[property_id] = a
       end
-      
       item.raw_attributes = attrs.to_json
       item.save
     end
   end
-  
+    
   # clearing up the collection
   def clear
 
