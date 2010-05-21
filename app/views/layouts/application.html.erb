@@ -1,27 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>ENVISION / A Collection Browser</title>
+  <title>Envision // A Collection Explorer</title>
   <%= stylesheet_link_tag :all %>
   <%= csrf_meta_tag %>
+  <script src="/javascripts/util.js"></script>
   <script src="/javascripts/jquery-1.4.2.min.js"></script>
   <script src="/javascripts/mustache.js"></script>
   <script src="/javascripts/date.js"></script>
   <script src="/javascripts/jquery-ui-1.8.custom.min.js"></script>
-  <script src="/javascripts/processing-0.8-patched.js"></script>
+  <script src="/javascripts/protovis-d3.1.js"></script>
   <script src="/javascripts/collection.js"></script>
   <script src="/javascripts/chart.js"></script>
   
-  <!-- Pluggable Chart Plotters -->
-  <script src="/javascripts/plotters/scatter.js"></script>
+  <!-- Register Chart Visualizations -->
+  <script src="/javascripts/visualizations/scatterplot.js"></script>
+  <script src="/javascripts/visualizations/barchart.js"></script>
+  <script src="/javascripts/visualizations/table.js"></script>
   
-  <%= yield :head %> 
+  <%= yield :head %>
 </head>
 <body>
 <div id="wrapper">
   <section id="header">
-    <h1>ENVISION&#8482;</h1>
-    <p>A Collection Navigator</p>
+    <h1>Envision&#8482;</h1>
+    <p>A Collection Explorer</p>
   </section>
   <%= yield %>
 </div>

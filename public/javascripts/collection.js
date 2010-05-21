@@ -1,7 +1,7 @@
 //-----------------------------------------------------------------------------
 // Collection API
 // Represents a collection of items
-// Collections can be grouped and aggregated in diverse 
+// Collections can be grouped and aggregated to generate diverse views
 //-----------------------------------------------------------------------------
 
 
@@ -9,8 +9,7 @@
 // Modifiers
 //-----------------------------------------------------------------------------
 
-
-var Modifiers = {}
+var Modifiers = {};
 
 // The default modifier simply does nothing
 Modifiers.DEFAULT = function(attribute) {
@@ -160,7 +159,6 @@ Item.prototype = {
   groupMembership: function(groupKeys) {
     var membership = [],
         that = this;
-        
     $.each(groupKeys, function(i, groupKey) {
       membership.push(groupKey.modifier(that.attributes[groupKey.property]));
     });

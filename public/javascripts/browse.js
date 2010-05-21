@@ -1,50 +1,4 @@
 //-----------------------------------------------------------------------------
-// Templates
-// TODO: 
-// Find a better place for templates — multiline string literals suck!
-//-----------------------------------------------------------------------------
-
-var Templates = {
-  facets: ' \
-  <a href="#" class="clear-filters">Clear filters</a><br/><br/> \
-    {{#facets}} \
-      <h3>{{property_name}}</h3> \
-      <ul> \
-        {{#facet_choices}} \
-          <li><a class="facet-choice" href="{{property}}">{{value}}</a> ({{item_count}})</li> \
-        {{/facet_choices}} \
-      </ul> \
-    {{/facets}}',
-  items: ' \
-    {{#items}} \
-      aa{{.}} \
-    {{/items}}',
-  view: ' \
-    <canvas id="chart"></canvas> \
-    <div id="view-settings"> \
-      <h4>measures</h4> \
-      <select id="measure_keys" multiple="multiple" name="measure_keys[]" style="width: 180px; height: 100px"> \
-        {{#properties}} \
-          <option {{#measureKeySelected}}selected="selected"{{/measureKeySelected}} value="{{key}}">{{name}} ({{type}})</option> \
-        {{/properties}} \
-      </select> \
-      <h4>identifiedBy</h4> \
-      <select id="identity_keys" multiple="multiple" name="identity_keys[]" style="width: 180px; height: 100px"> \
-        {{#properties}} \
-          <option {{#identityKeySelected}}selected="selected"{{/identityKeySelected}} value="{{key}}">{{name}} ({{type}})</option> \
-        {{/properties}} \
-      </select> \
-      <h4>groupBy</h4> \
-      <select id="group_keys" multiple="multiple" name="group_keys[]" style="width: 180px; height: 100px"> \
-        {{#properties}} \
-          <option {{#groupKeySelected}}selected="selected"{{/groupKeySelected}} value="{{key}}">{{name}} ({{type}})</option> \
-        {{/properties}} \
-      </select> \
-      Aggregieren <input id="aggregate" name="aggregate" type=checkbox value="1"/> \
-    </div>'
-};
-
-//-----------------------------------------------------------------------------
 // FilterCriteria
 //-----------------------------------------------------------------------------
 
@@ -69,7 +23,6 @@ FilterCriteria.prototype = {
 
 var filters = new FilterCriteria();
 
-
 //-----------------------------------------------------------------------------
 // View
 // Reflects settings needed for drawing a chart
@@ -82,26 +35,57 @@ var View = function(collection, options) {
   this.measureKeys = [];
   this.identityKeys = options.identity_keys || [];
   this.groupKeys = options.group_keys || [];
-  this.aggregate = false;
+  this.aggregated = false;
+  
+  // TODO: use table as the standard visualization
+  this.visualization = options.visualization || 'scatterplot';
   
   this.id = options.id;
-  this.collectionId = options.collectionId;
+  this.collectionId = options['collection_id'];
   var that = this;
   
   // init measures
   $.each(options.measures, function(index, property) {
     that.measureKeys.push(property);
   });
-  
-  
-}
+};
 
 View.prototype = {
+  transformMultiselect: function(element) {
+    element.hide(); // hide but keep the logic
+    
+    var selectedList = $('<ul class="selected"></ul>');
+    element.after(selectedList);
+    var availableList = $('<ul class="available"></ul>');
+    selectedList.after(availableList);
+    
+    // populate lists
+    var options = element.find('option');    
+    options.each(function() {
+      var li = $('<li><a href="#">'+$(this).text()+'</a><span></span></li>');
+      var selected = $(this).attr('selected');
+      
+      li.data('option', this);
+      li.children('a').click(function() {
+        var option = $($(this).parent().data('option'));
+        // flip selected option
+        option.attr('selected', !option.attr('selected'));
+        option.parent().trigger('change');
+        $(this).parent().appendTo(option.attr('selected') ? selectedList : availableList);
+      });
+      li.appendTo(selected ? selectedList : availableList);
+    });
+  },
+  updateCanvasSize: function() {
+    $('#chart').width($('#results').width()-$('#view-settings').width()-30);
+    $('#chart').height($('#results').height()-20);
+  },
   update: function() {
     this.measureKeys = $('select#measure_keys').val() || [];
     this.identityKeys = $('select#identity_keys').val() || [];
     this.groupKeys = $('select#group_keys').val() || [];
-    this.aggregate = $('input#aggregate').is(':checked');
+    this.aggregated = $('input#aggregated').is(':checked');
+    this.visualization = $('select#visualization').val();
     
     var that = this;
     this.renderChart();
@@ -113,7 +97,9 @@ View.prototype = {
       data: {
         measure_keys: that.measureKeys,
         identity_keys: that.identityKeys,
-        group_keys: that.groupKeys
+        group_keys: that.groupKeys,
+        aggregated: that.aggregated,
+        visualization: that.visualization
       },
       success: function(json) {
         console.log("view settings updated");
@@ -138,11 +124,35 @@ View.prototype = {
           });
         });
         return result;
+      },
+      visualization: that.visualization,
+      visualizations: function() {
+        var result = [];
+        $.each(Chart.visualizations, function(key, vis) {
+          result.push({
+            code: key,
+            className: vis.className,
+            selected: key === that.visualization,
+          });
+        });
+        return result;
       }
     };
 
     // render results template
     $('#results').html($.mustache($.template('view'), v));
+    
+    // update canvas dimensions
+    this.updateCanvasSize();
+    
+    // transform multiselect boxes
+    this.transformMultiselect($('#measure_keys'));
+    this.transformMultiselect($('#group_keys'));
+    this.transformMultiselect($('#identity_keys'));
+    
+    // highlight the view
+    $('#available-views li').removeClass('selected');
+    $('#view_'+this.id).addClass('selected');
     
     $('#view-settings select').change(function() {
       that.update();
@@ -154,27 +164,22 @@ View.prototype = {
     that.renderChart();
   },
   renderChart: function() {
-    // quick and dirty scatter plot
-    // TODO: let the chart decide if it's able to render measures.length measures
-    if (this.measureKeys.length >= 2) {
-      $('#chart').chart('destroy');
-      
-      // prepare grouping options
-      var groupKeys = $.map(this.groupKeys, function(k) { return {property: k, modifier: Modifiers.DEFAULT}; });
-      
-      $('#chart').chart({
-          collection: this.collection,
-          plotOptions: {
-            plotType: 'scatter',
-            groupBy: groupKeys, // list of groupkeys
-            aggregate: this.aggregate,
-            identifyBy: this.identityKeys, // salesman, customer name
-            measures: this.measureKeys
-          }
-      });
-    }
+    
+    $('#chart').chart('destroy');
+    // prepare grouping options
+    var groupKeys = $.map(this.groupKeys, function(k) { return { property: k, modifier: Modifiers.DEFAULT}; });
+    $('#chart').chart({
+        collection: this.collection,
+        plotOptions: {
+          visualization: this.visualization,
+          groupBy: groupKeys,
+          aggregated: this.aggregated,
+          identifyBy: this.identityKeys,
+          measures: this.measureKeys
+        }
+    });
   }
-}
+};
 
 //-----------------------------------------------------------------------------
 // Mustache stuff
@@ -182,102 +187,135 @@ View.prototype = {
 
 ;(function($) {
   $.mustache = function(template, view, partials) {
-      return Mustache.to_html(template, view, partials);
+    return Mustache.to_html(template, view, partials);
   };
+  
   $.template = function(template) {
     return Templates[template];
-  },
+  };
   $.view = function(view) {
     return Views[view];
-  }
+  };
 })(jQuery);
 
-
 //-----------------------------------------------------------------------------
-// Client
-// TODO: reorganize the mess
+// Facets
+// holds the current facet state (selected facet choices) -> FilterCriteria
 //-----------------------------------------------------------------------------
 
-var Client = {
-  updateCollection: function(json) {
-    var collection = new Collection(json);
-    var facets = json.facets;
-    var view = null;
+var Facets = function(options) {
+  this.selectedFacet = null;
+  this.collection = options.collection;
+  this.facets = options.facets;
+};
+
+Facets.prototype = {
+  select: function(element) {
+    $('.facet').removeClass('selected');
+    element.toggleClass('selected');
+    this.updatePanelHeight();
+  },
+  updatePanelHeight: function() {
+    var facetHeaders = $('.facet h3'),
+        selectedFacet = $('.facet.selected'),
+        facetChoices = selectedFacet.children('ul'),
+        maxHeight = $('#facets').height()-facetHeaders.height()*(facetHeaders.length)-facetHeaders.length*6;
     
-    var Views = {
-      items: {
-        items: function() {
-        }
-      },
-      facets: {
-        facets: function() {
-          result = []
-          $.each(facets, function(key, choices) {
-            result.push({property: key, property_name: collection.properties[key].name, facet_choices: function() {
-              return $.map(choices, function(fc) { return {value: fc.value, item_count: fc.item_count} });
-            }});
-          });
-          return result;
-        }
-      }
+    if (selectedFacet.height()>maxHeight) {
+      facetChoices.height(maxHeight);
     }
+  },
+  // renders the current facet state
+  render: function() {
+    var that = this;
     
-    var facets_html = $.mustache($.template('facets'), Views['facets']);
+    var facetView = {
+      facets: function() {
+        result = []
+        $.each(that.facets, function(key, choices) {
+          result.push({property: key, property_name: that.collection.properties[key].name, facet_choices: function() {
+            return $.map(choices, function(fc) { return {value: fc.value, item_count: fc.item_count} });
+          }});
+        });
+        return result;
+      }
+    };
     
-    // update html
+    var facets_html = $.mustache($.template('facets'), facetView);
     $('#facets').html(facets_html);
+    this.select($(".facet:first"));
     
-    // attach events
-    $('a.facet-choice').click(function() {      
-      filters.addCriterion($(this).attr('href'), $(this).text());
-      $.ajax({
-        url: '/collections/1/update_filters.json',
-        type: 'put',
-        data: {criteria: filters.getCriteria()},
-        success: function(json) {
-          Client.updateCollection(json);
-        }
-      });
-      
-      return false;
+    this.attachEvents();
+  },
+  attachEvents: function() {
+    var that = this;
+    
+    // switch active facet
+    $('.facet h3 a').click(function() {
+      that.select($(this).parent().parent());
     });
     
-    // views
-    $('a.view').click(function() {
+    // select facet choice
+    $('a.facet-choice').click(function() {      
+      filters.addCriterion($(this).attr('href'), $(this).text());
+      console.log('TODO: implement');
+      return false;
+    });
+  }
+};
+
+//-----------------------------------------------------------------------------
+// BrowsingSession
+// This is where everything begins
+//-----------------------------------------------------------------------------
+
+var BrowsingSession = function(options) {
+  this.collection = new Collection(options);
+  this.view = new View(this.collection, options['default_view']);
+  this.facets = new Facets({facets: options.facets, collection: this.collection});
+
+  var that = this;
+  
+  // update layout on resize
+  $(window).resize(function(){
+    that.facets.updatePanelHeight();
+  });
+  
+  this.render();
+};
+
+BrowsingSession.prototype = {
+  render: function() {
+    this.view.render();
+    this.facets.render();
+    this.registerEvents();
+  },
+  registerEvents: function() {
+    var that = this;
+    $('li.view a').click(function() {
       $.ajax({
         url: $(this).attr('href'),
         dataType: 'json',
         success: function(viewOptions) {
-          view = new View(collection, viewOptions);
+          view = new View(that.collection, viewOptions);
           view.render();
         }
       });
       return false;
     });
-    
-    // attach events
-    $('a.clear-filters').click(function() {      
-      filters.clear();
-      $.ajax({
-        url: '/collections/1/update_filters.json',
-        type: 'put',
-        data: {criteria: filters.getCriteria()},
-        success: function(json) {
-          Client.updateCollection(json);
-        }
-      });
-      
-      return false;
-    });
   }
-}
+};
+
 
 $(function() {
+  // fire up the browser by creating a new browsing session
+  
+  var collectionId = $('#collection_id').text();
   $.ajax({
-    url: '/collections/1.json',
+    url: '/collections/'+collectionId+'.json',
     dataType: 'json',
     success: function(json) {
-      Client.updateCollection(json);
+      var bs = new BrowsingSession(json)
     }
   });
 });
