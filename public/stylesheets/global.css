@@ -9,16 +9,16 @@ header, footer, section, nav { display:block; }
 /* samo background color: #eaefe0; */
 
 html { overflow-x: hidden; }
-html,body { margin:0px; padding:0px; color: #33302a; font-family: "Century Gothic", Helvetica, Arial, sans-serif; font-size-adjust:none; font-stretch:normal; font-style:normal; 	font-variant:normal; font-weight:normal; line-height:normal; background: #eee; }
+html,body { margin:0px; padding:0px; color: #33302a; font-family: "Century Gothic", Helvetica, Arial, sans-serif; font-size: 11px; font-size-adjust:none; font-stretch:normal; font-style:normal; 	font-variant:normal; font-weight:normal; line-height:normal; background: #fff; }
 body { margin: 0px; padding: 0px; }
 
-div#wrapper { position: absolute; top: 5px; left: 5px; right: 5px; bottom: 5px; overflow: hidden; }
-a { color: #3b3b32; text-decoration: none; border-bottom: 1px dotted #444; background-color: #e1dfc6; }
-a:hover { color: #000; background-color: #d2cfba; }
-h2 { font-size: 19px; color: #3a3227; text-transform: uppercase; padding: 5px 5px; margin: 0px; }
-h3 { font-size: 15px; color: #3a3227; text-transform: uppercase; padding: 0px; margin: 0px; }
+div#wrapper { position: absolute; top: 5px; left: 10px; right: 10px; bottom: 5px; overflow: hidden; }
+a { color: #3b3b32; text-decoration: none; }
+a:hover { color: #000; }
 
-
+h2 { font-family: 'Times'; font-style: italic; font-size: 19px; color: #3a3227; padding: 5px 5px; margin: 0px; }
+h3 { font-size: 15px; color: #3a3227; padding: 0px; margin: 0px; font-weight: normal; }
+h4 { font-family: 'Times'; font-style: italic;}
 
 
 /*
@@ -27,20 +27,25 @@ h3 { font-size: 15px; color: #3a3227; text-transform: uppercase; padding: 0px; m
 -----------------------------------------
 */
 
-section#header { height: 50px; border-bottom: 2px solid #555; }
-section#header h1 { width: 200px; color: #555; font-weight: bold; margin: 0px; font-size:26px; padding: 0px; margin-left: 10px; }
-section#header p { margin: 0; padding: 0; margin-left: 10px; font-size: 13px; line-height:1.3; color: #555; position: relative; top: -6px; }
+section#header { font-family: 'Times'; font-style: italic; height: 44px; width: 300px; border-bottom: 2px solid #000;}
+section#header h1 { width: 200px; color: #000; font-weight: bold; margin: 0px; font-size:26px; padding: 0px; padding-top: 5px; margin-left: 0px; }
+section#header p { font-family: 'Times'; margin: 0; padding: 0; margin-left: 0px; font-size: 13px; line-height:1.3; color: #555; position: relative; top: -6px; }
 
 
 /*
 -----------------------------------------
- Search and Trail
+ Trail
 -----------------------------------------
 */
 
-section#search { background: #fff; position: absolute; left: 0px; top: 55px; height: 25px; width: 300px; padding: 10px; }
-section#trail { background: #fff; position: absolute; left: 325px; top: 55px; right: 0px; height: 25px; padding: 10px; }
+#trail { background: #fff; position: absolute; left: 325px; top: 0px; right: 0px; height: 22px; padding: 10px; border-bottom: 2px solid #000; }
 
+
+ul#available-views { margin-left: 0; padding-left: 0; white-space: nowrap; }
+ul#available-views li { display: inline; list-style-type: none; }
+ul#available-views a { font-family: 'Times'; font-style: italic; font-size: 14px; padding: 3px 10px; background: #eee;}
+
+ul#available-views a:hover, ul#available-views li.selected a { color: #fff; background-color: #000; text-decoration: none; }
 
 /*
 -----------------------------------------
@@ -48,8 +53,19 @@ section#trail { background: #fff; position: absolute; left: 325px; top: 55px; ri
 -----------------------------------------
 */
 
-section#facets { background: #fff; position: absolute; top: 105px; bottom: 0px; width: 300px; padding: 10px; overflow: auto; }
+section#facets { background: #fff; position: absolute; top: 50px; bottom: 0px; width: 300px; padding: 0px; overflow: auto; }
 
+.facet ul { margin: 0px; padding: 0px; display: none; }
+.facet.selected ul { display: block; }
+.facet li { list-style: none; margin: 0; padding: 0.25em; border-bottom: 1px solid gray; overflow: auto;}
+.facet li:hover { background: #eee; }
+.facet li a { float: left; text-decoration: none; }
+.facet li span { float: right; }
+.facet .facet-choices { overflow: auto; }
+.facet h3 { padding: 3px; font-family: 'Times'; font-style: italic; background: #006fa4; }
+.facet h3:hover { background: black; }
+.facet.selected h3 { background: black; }
+.facet h3 a { color: white; display: block; }
 
 
 /*
@@ -58,11 +74,28 @@ section#facets { background: #fff; position: absolute; top: 105px; bottom: 0px; 
 -----------------------------------------
 */
 
-section#results { background: #fff; position: absolute; left: 325px; top: 105px; bottom: 0px; right: 0px; padding: 10px; overflow: auto; }
+section#results { background: #fff; position: absolute; left: 325px; top: 50px; bottom: 0px; right: 0px; overflow: auto; }
+#chart { float: left; overflow: auto; }
 
-canvas#chart { width: 700px; height: 500px; float: left; }
 
-section#results #view-settings { background: #eee; float: right; width: 190px;}
+/*
+-----------------------------------------
+ View Settings
+-----------------------------------------
+*/
+
+#view-settings { top: 0px; float: right; width: 190px;}
+#view-settings h3 { color: white; padding: 3px; font-family: 'Times'; font-style: italic; background: #006fa4; }
+#view-settings h3:hover { background: black; }
+
+/* Settings selection */
+
+#view-settings ul { margin: 0px; padding: 0px; }
+#view-settings li { list-style: none; margin: 0; padding: 0.25em; border-bottom: 1px solid gray; overflow: auto;}
+#view-settings ul.selected li {background: #ccc;}
+#view-settings li:hover { background: #eee; }
+#view-settings li a { float: left; text-decoration: none; }
+#view-settings li span { float: right; }
 
 /*
 -----------------------------------------
@@ -78,7 +111,6 @@ section#content { display: none; position: absolute; top: 200px; bottom: 200px; 
  Various
 -----------------------------------------
 */
-
 
 .hidden { display:none; }
 
