@@ -1,22 +1,22 @@
 <% content_for :head do %>
+  <script src="/javascripts/templates.js"></script>
   <script src="/javascripts/browse.js"></script>
 <% end %>
-
-<section id="search">
-  <input type="text" name="searchstr"/>
-</section>
-
+<% if @collection %>
 <section id="trail">
-  <% @collection.views.each do |v| %>
-    <a class="view" href="<%= collection_view_path(@collection.id, v.id)%>"><%= v.name %></a>
-  <% end %>
-  
+  <ul id="available-views">
+    <% @collection.views.each do |v| %>
+      <li id="view_<%= v.id %>" class="view<%= @collection.views.first.id == v.id ? " selected" : "" %>">
+        <a href="<%= collection_view_path(@collection.id, v.id)%>"><%= v.name %></a>
+      </li>
+    <% end %>
+  </ul>
 </section>
-
 <section id="facets">
-
 </section>
-
 <section id="results">
-    
 </section>
+<span style="display: none" id="collection_id"><%= @collection.id %></span>
+<% else %>
+  Collection does not exist
+<% end %>
