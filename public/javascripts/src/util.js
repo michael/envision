@@ -18,10 +18,10 @@
 * inheritance</a>.
 */
 
-Object.extend = function(f) {
-  function g() {}
-  g.prototype = f.prototype || f;
-  return new g();
+Object.extend = function (f) {
+  function G() {}
+  G.prototype = f.prototype || f;
+  return new G();
 };
 
 
@@ -29,4 +29,33 @@ Object.create = function (o) {
   function F() {}
   F.prototype = o;
   return new F();
+};
+
+
+// Usage:
+// 
+// ["a","b", "c"].eachItem(function(item, index) {
+//   console.log(item);
+// });
+if (!Array.prototype.eachItem) {
+  Array.prototype.eachItem = function (f, o) {
+    var n = this.length || 0,
+        i;
+    for (i = 0; i < n; i += 1) {
+      if (i in this) {
+        f.call(o, this[i], i, this);
+      }
+    }
+  };
+}
+
+Object.keys = function (obj) {
+  var array = [],
+      prop;
+  for (prop in obj) {
+    if (obj.hasOwnProperty(prop)) {
+      array.push(prop);
+    }
+  }
+  return array;
 };

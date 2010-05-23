@@ -52,6 +52,7 @@ var View = function(collection, options) {
 
 View.prototype = {
   transformMultiselect: function(element) {
+
     element.hide(); // hide but keep the logic
     
     var selectedList = $('<ul class="selected"></ul>');
@@ -73,6 +74,7 @@ View.prototype = {
         option.parent().trigger('change');
         $(this).parent().appendTo(option.attr('selected') ? selectedList : availableList);
       });
+      
       li.appendTo(selected ? selectedList : availableList);
     });
   },
@@ -108,7 +110,7 @@ View.prototype = {
   },
   render: function() {
     var that = this;
-    
+
     var v = {
       properties: function() {
         var result = [];
@@ -153,31 +155,35 @@ View.prototype = {
     // highlight the view
     $('#available-views li').removeClass('selected');
     $('#view_'+this.id).addClass('selected');
-    
     $('#view-settings select').change(function() {
       that.update();
     });
+    
     $('#view-settings input').change(function() {
       that.update();
     });
-
+    
     that.renderChart();
   },
   renderChart: function() {
-    
-    $('#chart').chart('destroy');
+
     // prepare grouping options
     var groupKeys = $.map(this.groupKeys, function(k) { return { property: k, modifier: Modifiers.DEFAULT}; });
-    $('#chart').chart({
-        collection: this.collection,
-        plotOptions: {
-          visualization: this.visualization,
-          groupBy: groupKeys,
-          aggregated: this.aggregated,
-          identifyBy: this.identityKeys,
-          measures: this.measureKeys
-        }
+
+    $('#chart').empty();
+    
+    var chart = new Chart($('#chart'), {
+      collection: this.collection,
+      plotOptions: {
+        visualization: this.visualization,
+        groupBy: groupKeys,
+        aggregated: this.aggregated,
+        identifyBy: this.identityKeys,
+        measures: this.measureKeys
+      }
     });
+    
+    chart.render();
   }
 };
 

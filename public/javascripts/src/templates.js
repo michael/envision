@@ -31,14 +31,6 @@ var Templates = {
           {{/properties}} \
         </select> \
       </div> \
-      <div id="identification"> \
-        <h3>Identify By</h3> \
-        <select id="identity_keys" multiple="multiple" name="identity_keys[]"> \
-          {{#properties}} \
-            <option {{#identityKeySelected}}selected="selected"{{/identityKeySelected}} value="{{key}}">{{name}} ({{type}})</option> \
-          {{/properties}} \
-        </select> \
-      </div> \
       <div id="grouping"> \
         <h3>Group By</h3> \
         <select id="group_keys" multiple="multiple" name="group_keys[]"> \
@@ -54,6 +46,14 @@ var Templates = {
           {{#visualizations}} \
             <option {{#selected}}selected="selected"{{/selected}} value="{{code}}">{{className}}</option> \
           {{/visualizations}} \
+        </select> \
+      </div> \
+      <div id="identification"> \
+        <h3>Identify By</h3> \
+        <select id="identity_keys" multiple="multiple" name="identity_keys[]"> \
+          {{#properties}} \
+            <option {{#identityKeySelected}}selected="selected"{{/identityKeySelected}} value="{{key}}">{{name}} ({{type}})</option> \
+          {{/properties}} \
         </select> \
       </div> \
     </div>'
