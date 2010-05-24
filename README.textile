@@ -2,21 +2,16 @@ _The following documentation is an uncomplete working draft, which will become m
 
 h1. Envision - A visual interface for browsing and analyzing semantically rich, structured data
 
-As part of my master thesis I'm developing a visual interface that aims to allow browsing and analysis of arbitrary data in new efficient ways. My master thesis, respectively the attempt of finding a generic methodology, which allows quick analysis and visualization of arbitrary structured data, is a sequel to former efforts in the field of
-"Information Visualization in the Semantic Web":http://quasipartikel.at/wp-content/uploads/2009/05/informationsvisualisierung_im_semantic-web1.pdf, which was the subject of my bachelor thesis (2008).
+As part of my master thesis I'm developing a visual interface that aims to allow browsing and analysis of arbitrary data in new efficient ways. My master thesis, respectively the attempt of finding a generic methodology, which allows quick analysis and visualization of arbitrary structured data, is a sequel to former efforts in the field of "Information Visualization in the Semantic Web":http://quasipartikel.at/wp-content/uploads/2009/05/informationsvisualisierung_im_semantic-web1.pdf, which was the subject of my bachelor thesis (2008).
 
-<em>Envision</em>, which is the project's temporary working title, is basically a browser that operates on arbitrary
-collections of similar data items. Apart from searching and filtering capabilities you'll be able to visualize data
-in various ways. Such visualization options will be added successively on demand. You can expect familiar chart types (bar, line, scatter) as well as some more advanced data visualizations. Also the inclusion of essential statistical methods is planned. The quality of the resulting browser will be examined using a set of criteria described in Aufreiter (2008) compared against existing solutions. Also a small user study is planned.
+<em>Envision</em>, which is the project's temporary working title, is basically a browser that operates on arbitrary collections of similar data items. Apart from searching and filtering capabilities you'll be able to visualize data in various ways. Such visualization options will be added successively on demand. You can expect familiar chart types (bar, line, scatter) as well as some more advanced data visualizations. Also the inclusion of essential statistical methods is planned. The quality of the resulting browser will be examined using a set of criteria described in Aufreiter (2008) compared against existing solutions. Also a small user study is planned.
 
 
-There have been plenty of attempts on taking advantage of increasing availability of high quality structured data.
-The "SIMILE":http://simile.mit.edu project of the MIT for instance is dedicated to the provision of tools for the data web. Among them are some for browsing data ("Longwell":http://simile.mit.edu/wiki/Longwell) as well as dedicated data visualization widgets ("Timeline":http://www.simile-widgets.org/timeline/, "Exhibit":http://www.simile-widgets.org/exhibit/, etc.).
+There have been plenty of attempts on taking advantage of increasing availability of high quality structured data. The "SIMILE":http://simile.mit.edu project of the MIT for instance is dedicated to the provision of tools for the data web. Among them are some for browsing data ("Longwell":http://simile.mit.edu/wiki/Longwell) as well as dedicated data visualization widgets ("Timeline":http://www.simile-widgets.org/timeline/, "Exhibit":http://www.simile-widgets.org/exhibit/, etc.).
 
 While there are great approaches and prototypes available for specific tasks, there's still a need for suitable uniform approaches for aggregating and processing data in order to be able to analyze it efficiently.
 
-The main motivation for researches in this field is the lack of valuable data aggregation services, that are available on the web. There's a strong necessity for making data analysis tasks a repeatable/reusable process. There's much potential for web based data integration tools, as they are not bound to local environments and
-can be used instantly by everyone. The recent evolvement of browser technology, like the introduction of HTML5 and increased Javascript performance, is a perfect foundation for building new kinds of powerful tools that hadn't been possible before.
+The main motivation for researches in this field is the lack of valuable data aggregation services, that are available on the web. There's a strong necessity for making data analysis tasks a repeatable/reusable process. There's much potential for web based data integration tools, as they are not bound to local environments and can be used instantly by everyone. The recent evolvement of browser technology, like the introduction of HTML5 and increased Javascript performance, is a perfect foundation for building new kinds of powerful tools that hadn't been possible before.
 
 
 h2. Problems with web data
@@ -88,8 +83,7 @@ An online demo will be made available as soon as the project is stable enough.
 
 h3. A suitable object model for describing graphical representations
 
-When looking at various visualization libraries you'll notice that most often they define
-an object model that rather describes a graphical representation and comes with a massive set of options for customization. Describing graphical objects like Axis, Categories and Labels in the first place has the disadvantage of resulting in tight coupling between data and representation. Data needs to be translated for a specific graphical representation. Data is mapped to Axis, Label and Category objects to power a bar chart, while it's mapped to Node and Edge data structures in order to visualize relationships between data items.
+When looking at various visualization libraries you'll notice that most often they define an object model that rather describes a graphical representation and comes with a massive set of options for customization. Describing graphical objects like Axis, Categories and Labels in the first place has the disadvantage of resulting in tight coupling between data and representation. Data needs to be translated for a specific graphical representation. Data is mapped to Axis, Label and Category objects to power a bar chart, while it's mapped to Node and Edge data structures in order to visualize relationships between data items.
 
 While this approach works fine for specific visualization tasks, which are accomplished with manual work, it fails when there's a need for visualizing arbitrary similar data items in a generic way.
 
@@ -112,8 +106,7 @@ An item of the collection conforms to a row in data table, except one 'cell' can
 
 h4. Property
 
-Meta-data (data about data) is represented as a set of properties that belongs to a collection.
-A property (cmp. a column in a table) holds a key, a name (cmp. header of a column) a type (telling wether the data is numeric or textual, etc.).
+Meta-data (data about data) is represented as a set of properties that belongs to a collection. A property (cmp. a column in a table) holds a key, a name (cmp. header of a column) a type (telling wether the data is numeric or textual, etc.).
 
 
 h4. Chart
@@ -123,8 +116,7 @@ A <em>Chart</em> is a wrapper for arbitrary graphical representations (visualiza
 After a chart is invoked, it can determine the set of available "Visualization Types":http://manyeyes.alphaworks.ibm.com/manyeyes/page/Visualization_Options.html. This would allow a user to zap through the available visualization types to find the best suitable. Visualization types that do not support
 the provided plot options can be disabled to prevent dead-ends. 
 
-The Chart API (JavaScript) can be found at "http://github.com/michael/chart":http://github.com/michael/chart.
-You can have a look at the implementation of  "Scatterplot":http://github.com/michael/chart/blob/master/src/visualizations/scatterplot.js as an example of a pluggable <em>Chart Visualization</em>. It uses the Protovis visualization framework for rendering. But any other visualization library can be used. The "Table Visualization":http://github.com/michael/chart/blob/master/src/visualizations/table.js just uses plain HTML.
+The Chart API (JavaScript) can be found at "http://github.com/michael/chart":http://github.com/michael/chart. You can have a look at the implementation of  "Scatterplot":http://github.com/michael/chart/blob/master/src/visualizations/scatterplot.js as an example of a pluggable <em>Chart Visualization</em>. It uses the Protovis visualization framework for rendering. But any other visualization library can be used. The "Table Visualization":http://github.com/michael/chart/blob/master/src/visualizations/table.js just uses plain HTML.
 
 h4. Measure
 
@@ -234,8 +226,7 @@ Envision is developed and tested against Ruby (1.9.1) and Rails (3.0.0-beta3)
 
 h3. Available collections
 
-Some sample collections are available through "Collectionize":http://github.com/michael/collectionize, a dedicated aggregator service, that translates interesting web services to a uniform collection format.
-Those collections that are represented in a readable JSON format can than be handled by Envision.
+Some sample collections are available through "Collectionize":http://github.com/michael/collectionize, a dedicated aggregator service, that translates interesting web services to a uniform collection format. Those collections that are represented in a readable JSON format can than be displayed by Envision.
 
 Currently available:
 
