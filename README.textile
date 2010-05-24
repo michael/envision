@@ -1,0 +1,283 @@
+_The following documentation is an uncomplete working draft, which will become more and more consistent as the project makes progress._
+
+h1. Envision - A visual interface for browsing and analyzing semantically rich, structured data
+
+As part of my master thesis I'm developing a visual interface that aims to allow browsing and 
+analysis of arbitrary data in new efficient ways. 
+My master thesis, respectively the attempt of finding a generic methodology, which allows quick analysis and visualization
+of arbitrary structured data, is a sequel to former efforts in the field of
+"Information Visualization in the Semantic Web":http://quasipartikel.at/wp-content/uploads/2009/05/informationsvisualisierung_im_semantic-web1.pdf,
+which was the subject of my bachelor thesis (2008).
+
+
+<em>Envision</em>, which is the project's temporary working title, is basically a browser that operates on arbitrary
+collections of similar data items. Apart from searching and filtering capabilities you'll be able to visualize data
+in various ways. Such visualization options will be added successively on demand.
+You can expect familiar chart types (bar, line, scatter) as well as some more advanced data visualizations.
+Also the inclusion of essential statistical methods is planned. The quality of the resulting browser will be examined using
+a set of criteria described in Aufreiter (2008) compared against existing solutions. Also a small user study is planned.
+
+
+There have been plenty of attempts on taking advantage of increasing availability of high quality structured data.
+The "SIMILE":http://simile.mit.edu project of the MIT for instance is dedicated to the provision of tools for the data web. 
+Among them are some for browsing data ("Longwell":http://simile.mit.edu/wiki/Longwell) as well as dedicated data visualization widgets ("Timeline":http://www.simile-widgets.org/timeline/, "Exhibit":http://www.simile-widgets.org/exhibit/, etc.).
+
+While there are great approaches and prototypes available for specific tasks, there's still a need for suitable uniform approaches
+for aggregating and processing data in order to be able to analyze it efficiently.
+
+The main motivation for researches in this field is the lack of valuable data aggregation services, that are available on the web.
+There's a strong necessity for making data analysis tasks a repeatable/reusable process.
+There's much potential for web based data integration tools, as they are not bound to local environments and
+can be used instantly by everyone. The recent evolvement of browser technology, like the introduction of HTML5 
+and increased Javascript performance, is a perfect foundation for building new kinds of powerful tools that hadn't been possible before.
+
+
+h2. Problems with web data
+
+* Various formats of semantically linked data (RDF, OWL, common webservices that provide data in XML or JSON format)
+* Working with semantic web data usually requires extensive knowledge in various domains
+* The vast amount of data and types often leads to disorientation
+* The semantic web is rather limited to a scientific domain
+* Processing of data is a repetitive task, that most often has to be done manually.
+* Most of the time you are not interested in the whole set of properties, but on a certain view on the data.
+
+h2. Needs
+
+* Interfaces to explore publicly available data and operate on them
+* An easy way to create views on raw data
+* Options to 'see' the data (connections, coherences, similarities etc.)
+* Data analysis (compare common properties of a set)
+* Reveal hidden patterns using information visualization
+* Apply statistical methods to gain insight and ground strategic decisions based on the data under investigation
+* Lowered barriers to start working with semantically rich data without having to do much preprocessing.
+
+
+h2. 1st priority goals
+
+* Description of a suitable approach to utilize data without costly manual preprocessing
+* Definition of an object model that allows viewing linked data in different ways
+* A generic browser interface that allows to navigate and analyze such data
+* Allow filtering (faceted browsing principle)
+* Provide various types of visualizations to compare and analyze data
+
+
+h2. 2nd priority goals
+
+* Apply techniques from the field of Intelligent User Interfaces by making use of Artificial Intelligence and knowledge-based techniques.
+* Description of a feasible approach to convert various data sources
+** Can this be done automatically/semi-automatically? 
+** Typed collections featuring various properties can be possibly distilled from linked data sources (RDF, Freebase, Last.fm, Delicious)
+** Because data is semantically annotated (RDF, OWL, etc.) software can reason about it and autonomously convert it to a corresponding collection format.
+
+
+h2. Intended Implementation
+
+* Rich web interface based on JavaScript and recent browser technologies (HTML, SVG)
+* Utilization of visualization frameworks (Protovis, Processing.js)
+* "Ruby on Rails":http://rubyonrails.org (Ruby Web Framework)
+* "REDIS":http://code.google.com/p/redis/ (fast persistent key-value database)
+
+
+h2. Existing tools and libraries
+
+* "Elastic Lists":http://well-formed-data.net/experiments/elastic_lists/ (Moritz Stefaner)
+* "Pivot":http://www.getpivot.com (Microsoft)
+* "Tableau Public":http://www.tableausoftware.com/public/ (Tableau Software)
+* "Parallax":http://www.freebase.com/labs/parallax/ (Set based browsing interface designed for Freebase)
+* "SIMILE":http://simile.mit.edu/ -  Semantic Interoperability of Metadata and Information in unLike Environments (MIT)
+* "ASKKEN":http://askken.heroku.com - Visual Freebase Resource browser (Michael Aufreiter)
+* "ManyEyes":http://manyeyes.alphaworks.ibm.com (IBM)
+* "Protovis":http://vis.stanford.edu/protovis/ (Stanford Visualization group)
+
+
+h2. References
+
+* "Informationsvisualisierung im Semantic Web":http://quasipartikel.at/wp-content/uploads/2009/05/informationsvisualisierung_im_semantic-web1.pdf (Michael Aufreiter, 2008)
+* "Collaborative Visualization":http://www2.computer.org/plugins/dl/pdf/mags/cg/2009/05/mcg2009050020.pdf?template=1&loginState=1&userData=anonymous-IP%253A%253A129.42.208.183 (Frank van Ham et. al, 2009)
+* "Many Eyes: A Site for Visualization at Internet Scale":http://www.research.ibm.com/visual/papers/viegasinfovis07.pdf (Fernanda B. Viègas et al, 2007)
+* "Protovis:  A graphical toolkit for visualization ":http://vis.stanford.edu/protovis/protovis.pdf
+
+
+h2. Current stage of research/development
+
+The following screenshot shows the current (early) stage of development:
+An online demo will be made available as soon as the project is stable enough.
+
+!http://ma.zive.at/envision_screenshot.png(Envision Interface Sketch)!
+
+
+h3. A suitable object model for describing graphical representations
+
+When looking at various visualization libraries you'll notice that most often they define
+an object model that rather describes a graphical representation and comes with a massive set of options for customization.
+Describing graphical objects like Axis, Categories and Labels in the first place has the disadvantage of resulting
+in tight coupling between data and representation. Data needs to be translated for a specific graphical representation.
+Data is mapped to Axis, Label and Category objects to power a bar chart, while it's mapped to Node and Edge data structures
+in order to visualize relationships between data items.
+
+While this approach works fine for specific visualization tasks, which are accomplished with manual work, it fails
+when there's a need for visualizing arbitrary similar data items in a generic way.
+
+The following object model is an attempt to overcome this problem.
+It strictly separates data (which is represented as a collection) from its possible graphical representation.
+
+I recently wrote about the problem of tightly coupling between data and representation at our
+"blog":http://quasipartikel.at/2010/05/04/in-search-of-a-suitable-object-model-for-describing-charts/, trying to propose a different, more data-centric approach.
+The approach has been refined since then. I'm going to update this document to reflect my latest understandings.
+
+
+h4. Collection
+
+A collection depicts the heart of the whole system. A data-set under investigation conforms to a collection that describes all facets of the underlying data
+in a simple and universal way. You can think of a collection as a table of data, except it provides precise information about the data contained (meta-data).
+
+An implementation of the Collection API is available as a separate JavaScript library at "http://github.com/michael/collection":http://github.com/michael/collection.
+
+h4. Item
+
+An item of the collection conforms to a row in data table, except one 'cell' can have arbitrary many values (non-unique attributes).
+
+
+h4. Property
+
+Meta-data (data about data) is represented as a set of properties that belongs to a collection.
+A property (cmp. a column in a table) holds a key, a name (cmp. header of a column) a type (telling wether the data is numeric or textual, etc.).
+
+
+h4. Chart
+
+A <em>Chart</em> is a wrapper for arbitrary graphical representations (visualizations) of data.
+It consists of a <em>Collection</em> (underlying data) and its vague graphical representation (plot options).
+The ultimate graphical result is not determined by the chart, but by the visualization, which is chosen to render the chart.
+
+After a chart is invoked, it can determine the set of available "Visualization Types":http://manyeyes.alphaworks.ibm.com/manyeyes/page/Visualization_Options.html.
+This would allow a user to zap through the available visualization types to find the best suitable. Visualization types that do not support
+the provided plot options can be disabled to prevent dead-ends.
+
+The Chart API (JavaScript) can be found at "http://github.com/michael/chart":http://github.com/michael/chart.
+You can have a look at the implementation of "Scatterplot":http://github.com/michael/chart/blob/master/src/visualizations/scatterplot.js as an example of a pluggable <em>Chart Visualization</em>.
+It uses the Protovis visualization framework for rendering. But any other visualization library can be used. The "Table Visualization":http://github.com/michael/chart/blob/master/src/visualizations/table.js just uses plain HTML.
+
+h4. Measure
+
+A <em>Measure</em> describes an arbitrary property that can be visualized in some way. 
+It's associated with a number of data points resulting from the corresponding items attributes.
+A measure also provides convenience methods such as minimum/maximum values the underlying data or tick interval computation.
+A measure corresponds to the concept of a <em>Series</em>, which is commonly used in graphic-centric visualization libraries.
+
+
+h4. Visualization
+
+A <em>Visualization</em> is an abstract interface for concrete implementations of interactive visualizations.
+A Visualization must implement a render method to be able to be unobtrusively plugged into the Chart object.
+Visualizations are invoked using a uniform constructor that takes a chart object. Therefore a visualization has
+access to the chart's data represented as a collection object and uses the chart's plot options
+to guide the visualization.
+
+
+h4. Exchange format
+
+The JSON exchange format conforms to the underlying object model and reads as follows:
+
+<pre>
+<code>
+  {
+    "properties": "properties": {
+      "name": {
+        "name": "Country Name",
+        "type": "string",
+        "unique": true
+      },
+      "official_language": {
+        "name": "Official language",
+        "type": "string",
+        "unique": true
+      },
+      "form_of_government": {
+        "name": "Form of governmennt",
+        "type": "string",
+        "unique": false
+      },
+      "currency_used": {
+        "name": "Currency used",
+        "type": "string",
+        "unique": true
+      },
+      "population": {
+        "name": "Population",
+        "type": "number",
+        "unique": true
+      },
+      "gdp_nominal": {
+        "name": "GDP nominal",
+        "type": "number",
+        "unique": true
+      },
+      "area": {
+        "name": "Area",
+        "type": "number",
+        "unique": true
+      },
+      "date_founded": {
+        "name": "Date founded",
+        "type": "date",
+        "unqiue": true
+      }
+    },
+    "items": [
+      {
+        "name": "Argentina",
+        "official_language": "Spanish Language",
+        "form_of_government": [
+          "Federal republic",
+          "Presidential system"
+        ],
+        "currency_used": "Argentinian Peso",
+        "population": 39745613,
+        "gdp_nominal": 338700000000.0,
+        "area": 2780403.0,
+        "date_founded": "1816-07-09"
+      },
+      ...
+    ],
+  }
+</code>
+</pre>
+
+
+h2. Installation
+
+<pre>
+<code>
+# Make sure you have Ruby (1.9.1) installed
+
+# Install Rails (3.0.0-beta3)
+gem install rails --pre
+
+# Install REDIS (1.3.0+) http://github.com/antirez/redis/downloads
+
+# Start redis
+./redis-server
+
+# Populate DB with some seed data
+rake redis:seed
+
+# Start the server
+rails server
+</code>
+</pre>
+
+h3. Requirements
+
+Envision is developed and tested against Ruby (1.9.1) and Rails (3.0.0-beta3)
+
+h3. Available collections
+
+Some sample collections are available through "Collectionize":http://github.com/michael/collectionize, a dedicated aggregator service, 
+that translates interesting web services to a uniform collection format.
+Those collections that are represented in a readable JSON format can than be handled by Envision.
+
+Currently available:
+
+* Countries fetched from Freebase.com (_/countries_)
+* Last.fm Playlists (_/playlists_)
