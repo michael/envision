@@ -1,3 +1,9 @@
 [submodule "public/javascripts/src/chart"]
 	path = public/javascripts/src/chart
 	url = git@github.com:michael/chart.git
+[submodule "public/javascripts/src/node"]
+	path = public/javascripts/src/node
+	url = git@github.com:michael/node.git
+[submodule "public/javascripts/src/collection"]
+	path = public/javascripts/src/collection
+	url = git@github.com:michael/collection.git
