@@ -89,7 +89,7 @@ While this approach works fine for specific visualization tasks, which are accom
 
 The following object model is an attempt to overcome this problem. It strictly separates data (which is represented as a collection) from its possible graphical representation.
 
-I recently wrote about the problem of tightly coupling between data and representation at our "blog":http://quasipartikel.at/2010/05/04/in-search-of-a-suitable-object-model-for-describing-charts/, trying to propose a different, more data-centric approach. The approach has been refined since then. I'm going to update this document to reflect my latest understandings.
+I recently wrote about the problem of tight coupling between data and representation at our "blog":http://quasipartikel.at/2010/05/04/in-search-of-a-suitable-object-model-for-describing-charts/, trying to propose a different, more data-centric approach. The approach has been refined since then. I'm going to update this document to reflect my latest understandings.
 
 
 h4. Collection
@@ -113,8 +113,7 @@ h4. Chart
 
 A <em>Chart</em> is a wrapper for arbitrary graphical representations (visualizations) of data. It consists of a <em>Collection</em> (underlying data) and its vague graphical representation (plot options). The ultimate graphical result is not determined by the chart, but by the visualization, which is chosen to render the chart.
 
-After a chart is invoked, it can determine the set of available "Visualization Types":http://manyeyes.alphaworks.ibm.com/manyeyes/page/Visualization_Options.html. This would allow a user to zap through the available visualization types to find the best suitable. Visualization types that do not support
-the provided plot options can be disabled to prevent dead-ends. 
+After a chart is invoked, it can determine the set of available "Visualization Types":http://manyeyes.alphaworks.ibm.com/manyeyes/page/Visualization_Options.html. This would allow a user to zap through the available visualization types to find the best suitable. Visualization types that do not support the provided plot options can be disabled to prevent dead-ends. 
 
 The Chart API (JavaScript) can be found at "http://github.com/michael/chart":http://github.com/michael/chart. You can have a look at the implementation of  "Scatterplot":http://github.com/michael/chart/blob/master/src/visualizations/scatterplot.js as an example of a pluggable <em>Chart Visualization</em>. It uses the Protovis visualization framework for rendering. But any other visualization library can be used. The "Table Visualization":http://github.com/michael/chart/blob/master/src/visualizations/table.js just uses plain HTML.
 
@@ -226,17 +225,16 @@ Envision is developed and tested against Ruby (1.9.1) and Rails (3.0.0-beta3)
 
 h3. Available collections
 
-Some sample collections are available through "Collectionize":http://github.com/michael/collectionize, a dedicated aggregator service, that translates interesting web services to a uniform collection format. Those collections that are represented in a readable JSON format can than be displayed by Envision.
+Some sample collections are available through "Collectionize":http://github.com/michael/collectionize, a dedicated aggregator service, that translates interesting web services to a uniform collection format. Those collections that are represented in a readable JSON format can then be displayed by Envision.
 
 Currently available:
 
 * Countries fetched from Freebase.com (_/countries_)
 * Last.fm Playlists (_/playlists_)
 
-
 h2. References
 
 * "Informationsvisualisierung im Semantic Web":http://quasipartikel.at/wp-content/uploads/2009/05/informationsvisualisierung_im_semantic-web1.pdf (Michael Aufreiter, 2008)
 * "Collaborative Visualization":http://www2.computer.org/plugins/dl/pdf/mags/cg/2009/05/mcg2009050020.pdf?template=1&loginState=1&userData=anonymous-IP%253A%253A129.42.208.183 (Frank van Ham et. al, 2009)
 * "Many Eyes: A Site for Visualization at Internet Scale":http://www.research.ibm.com/visual/papers/viegasinfovis07.pdf (Fernanda B. Viègas et al, 2007)
-* "Protovis:  A graphical toolkit for visualization ":http://vis.stanford.edu/protovis/protovis.pdf
+* "Protovis:  A graphical toolkit for visualization":http://vis.stanford.edu/protovis/protovis.pdf (Stanford Visualizatoin Group)

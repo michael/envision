@@ -37,30 +37,40 @@ class BrowsingSession
   end
   
   def to_json
-    result = {
-      :properties => {},
-      :items => [],
+    result = JSON.parse(Net::HTTP.get_response(::URI.parse(@collection.uri)).body)
+    
+    result.merge!({
       :facets => {},
       :collection_id => @collection.id,
       :uri => @collection.uri,
       :default_view => @collection.views.first.to_hash
-    }
+    })
     
-    @collection.properties.each do |p|
-      result[:properties][p.id] = {:name => p.name, :type => p.type, :unique => true}
-    end
+    # result = {
+    #   :properties => {},
+    #   :items => [],
+    #   :facets => {},
+    #   :collection_id => @collection.id,
+    #   :uri => @collection.uri,
+    #   :default_view => @collection.views.first.to_hash
+    # }
     
-    items.each do |i|
-      item = {}
-      i.attributes.each do |key, a|
-        item[key] = a
-      end
-      result[:items] << item
-    end
+    # @collection.properties.each do |p|
+    #   result[:properties][p.id] = {:name => p.name, :type => p.type, :unique => true}
+    # end
     
-    facets.each do |f|
-      result[:facets][f.property.id.to_s] = f.facet_choices.map { |fc| {:value => fc.value, :item_count => fc.item_count} }
-    end
+    # items.each do |i|
+    #   item = {}
+    #   i.attributes.each do |key, a|
+    #     item[key] = a
+    #   end
+    #   result[:items] << item
+    # end
+    
+    # facets.each do |f|
+    #   result[:facets][f.property.id.to_s] = f.facet_choices.map { |fc| {:value => fc.value, :item_count => fc.item_count} }
+    # end
+    # 
     
     JSON.pretty_generate(result)
   end
