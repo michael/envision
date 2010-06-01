@@ -31,7 +31,7 @@ var Templates = {
           {{/properties}} \
         </select> \
       </div> \
-      <div id="grouping"> \
+      <div id="grouping" style="display: none"> \
         <h3>Group By</h3> \
         <select id="group_keys" multiple="multiple" name="group_keys[]"> \
           {{#properties}} \
@@ -39,6 +39,13 @@ var Templates = {
           {{/properties}} \
         </select> \
         Aggregate (SUM) <input id="aggregated" name="aggregated" type=checkbox value="1"/> \
+      </div> \
+      <div id="operations"> \
+        <h3>Operations</h3> \
+        <select id="operations" name="operation"> \
+          <option value="">- - - </option> \
+          <option value="getCoOccurrences">Get Co-Occurrences</option> \
+        </select> \
       </div> \
       <div id="visualizations"> \
         <h3>Visualisierung</h3> \
@@ -48,7 +55,7 @@ var Templates = {
           {{/visualizations}} \
         </select> \
       </div> \
-      <div id="identification"> \
+      <div id="identification" style="display: none;"> \
         <h3>Identify By</h3> \
         <select id="identity_keys" multiple="multiple" name="identity_keys[]"> \
           {{#properties}} \

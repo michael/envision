@@ -117,44 +117,195 @@ Aggregators.MAX = function (key, items) {
 Aggregators.COUNT = function (key, items) {
   var result = 0;
   return items.length;
-};//-----------------------------------------------------------------------------
-// Item
-//-----------------------------------------------------------------------------
-
-var Item = function (chart, attributes) {
-  this.attributes = attributes;
 };
 
-Item.prototype = {
-  groupMembership: function (groupKeys) {
-    var membership = [],
-        that = this;
-    
-    groupKeys.eachItem(function (groupKey) {
-      membership.push(groupKey.modifier(that.attributes[groupKey.property]));
-    });
-    return membership;
+// -----------------------------------------------------------------------------
+// Node API
+// -----------------------------------------------------------------------------
+// 
+// JavaScript graph implementation that hides graph complexity from the interface
+// It introduces properties, which group types of edges together.
+// Therefore multi-partit graphs are possible without any hassle
+
+// Every Node simply contains properties which conform to outgoing edges
+// More specificly properties group together similar edges
+
+// Usage:
+
+// languages
+// var german = new Node({id: "ger"});
+// var austrian = new Node({id: "austrian"});
+// var english = new Node({id: "en"});
+
+var x = new Node();
+// 
+// // confederations (API suggestion)
+// var eu = new Node({id: "eu"});
+// 
+// // countries
+// var austria = new Node({id: "at"});
+// austria.property("languages", german);
+// austria.property("languages", austrian);
+// austria.property("confederations", eu);
+// 
+// var germany = new Node({id: "de"});
+// germany.property("languages", german);
+// germany.property("confederations", eu);
+// 
+// var uk = new Node({id: "uk"});
+// uk.property("languages", english);
+// uk.property("confederations", eu);
+// 
+// // backlinks
+// german.property("spokenIn", austria);
+// german.property("spokenIn", germany);
+// english.property("spokenIn", uk);
+// eu.property("countries", austria);
+// eu.property("countries", germany);
+// eu.property("countries", uk);
+
+// test
+// austria.property("languages").each(function(lang) {
+//   console.log(lang);
+// });
+// 
+// eu.property("countries").each(function(country) {
+//   console.log(country);
+// });
+
+// used to conveniently wrap a set of nodes
+var NodeSet = function (nodes) {
+  this.nodes = nodes;
+};
+
+// iterate over nodes contained in the NodeSet
+NodeSet.prototype.each = function (f) {
+  var i = 0;
+  for (prop in this.nodes) {
+    if (this.nodes.hasOwnProperty(prop)) {
+      f.call(this, this.nodes[prop], i);
+      i += 1;
+    }
   }
 };
 
+// returns one first node of the nodeset
+// since object properties are actually unorded
+// it can't be guaranteed that the first element is returned
+NodeSet.prototype.first = function (f) {
+  return this.each(function(node) {
+    return node;
+  });
+};
+
+var Node = function (options) {
+  this.id = Node.generateId();
+  if (options) {
+    this.id = options.id || this.id;
+    this.value = options.value; // used for leave nodes (simple types)
+  }
+  this.properties = {};
+};
+
+// artificial unique ids for nodes
+Node.nodeCount = 0;
+Node.generateId = function () {
+  return Node.nodeCount += 1;
+};
+
+// sets or gets a property on the current node
+Node.prototype.property = function (property, targetNode) {
+  if (targetNode !== undefined) {
+    this.setProperty(property, targetNode);
+  } else {
+    return this.getProperty(property);
+  };
+};
+
+Node.prototype.relationships = function () {
+  // TODO: returns all edges of properties
+};
+
+// sets or gets a unique property on the current node
+// Node.prototype.uniqueProperty = function(property, targetNode) {
+//   if (targetNode !== undefined) {
+//     this.setUniqueProperty(property, targetNode);
+//   } else {
+//     return this.getUniqueProperty(property);    
+//   };
+// };
+// 
+// Node.prototype.setUniqueProperty = function (property, targetNode) {
+//   this.properties[property] = targetNode;
+// };
+// 
+// Node.prototype.getUniqueProperty = function (property) {
+//   return this.properties[property];
+// };
+
+Node.prototype.setProperty = function (property, targetNode) {
+  var p = this.properties[property] || {},
+      key = targetNode.id;
+
+  p[key] = targetNode;
+  this.properties[property] = p;
+};
+
+// returns target nodes wrapped in a NodeSet, which is iterable
+Node.prototype.getProperty = function (property) {
+  return new NodeSet(this.properties[property]);
+};
+
+
+
 //-----------------------------------------------------------------------------
 // Item
 //-----------------------------------------------------------------------------
 
-var Item = function (chart, attributes) {
+var Item = function (collection, attributes) {
+  var that = this;
+  
+  // super call / node constructor
+  Node.call(this);
+  
+  // obsolete start
+  ////////////////////////////////
   this.attributes = attributes;
+  // obsolete start
+  ////////////////////////////////
+  
+  // register item properties
+  $.each(attributes, function(key, attr) {
+    if (!$.isArray(attr)) {
+      attr = [attr];
+    }
+    $.each(attr, function(index, v) {
+      var valueNode = new Node({value: v});
+      that.property(key, valueNode);
+      var propertyNode = collection.properties[key];
+      valueNode.property("property", propertyNode);
+      // register backlink
+      propertyNode.property("values", valueNode);
+    });
+  });
+  
+  // item node belongs to collection node
+  this.property("collection", collection.graph);
+  
+  // register backlink from to collection to item
+  collection.graph.property("items", this);
 };
 
-Item.prototype = {
-  groupMembership: function (groupKeys) {
-    var membership = [],
-        that = this;
-    
-    groupKeys.eachItem(function (groupKey) {
-      membership.push(groupKey.modifier(that.attributes[groupKey.property]));
-    });
-    return membership;
-  }
+Item.prototype = Object.extend(Node);
+
+Item.prototype.groupMembership = function (groupKeys) {
+  var membership = [],
+      that = this;
+  
+  groupKeys.eachItem(function (groupKey) {
+    membership.push(groupKey.modifier(that.attributes[groupKey.property]));
+  });
+  return membership;
 };
 
 //-----------------------------------------------------------------------------
@@ -162,12 +313,43 @@ Item.prototype = {
 //-----------------------------------------------------------------------------
 
 
-var Property = function (chart, key, options) {
+var Property = function (collection, key, options) {
   // constructing 
-  this.chart = chart;
+  this.collection = collection;
+  
+  // super call / node constructor
+  Node.call(this);
+  
+  // obsolete start
+  //////////////////////////////// 
   this.key = key;
   this.name = options.name;
   this.type = options.type;
+  // obsolete start
+  ////////////////////////////////
+  
+  // construct properties
+  this.property("type", new Node({value: options.type}));
+  this.property("name", new Node({value: options.name}));
+  this.property("key", new Node({value: key}));
+  this.property("colletion", this.collection.graph);
+  
+  // register backling from collection to property
+  this.collection.graph.property("properties", this);
+};
+
+Property.prototype = Object.extend(Node);
+
+Property.prototype.getName = function() {
+  this.property("name").value;
+};
+
+Property.prototype.getKey = function() {
+  this.property("key").value;
+};
+
+Property.prototype.getKey = function() {
+  this.property("key").value;
 };
 
 //-----------------------------------------------------------------------------
@@ -182,17 +364,33 @@ var Collection = function (options) {
   this.items = [];
   var that = this;
   
-  // init properties  
-  $.each(options.properties, function (key, options) {
-    that.properties[key] = new Property(that, key, options);
+  // register root node
+  this.graph = new Node();
+  
+  // register properties on graph
+  $.each(options.properties, function(key, property) {
+    that.properties[key] = new Property(that, key, property);
   });
   
-  options.items.eachItem(function (item) {
-    that.items.push(new Item(that, item));
+  options.items.eachItem(function (options) {
+    that.items.push(new Item(that, options));
   });
+  
+  console.log(this.graph);
 };
 
 Collection.prototype = {
+  
+  // convenience functions to hide graph complexity
+  getProperties: function () {
+    // asks the graph for properties
+    return this.graph.property("properties");
+  },
+  getItems: function () {
+    // asks the grpah for items
+    return this.graph.property("items");
+  },
+  
   // build groups based on groupKeys
   getGroups: function (groupKeys) {
     var that = this,
@@ -231,7 +429,7 @@ Collection.prototype = {
         that = this,
         newProps = {},
         newItems = [];
-
+  
     // property projection
     options.keys.eachItem(function (key) {
       newProps[key.property] = that.properties[key.property];
@@ -244,10 +442,12 @@ Collection.prototype = {
     $.each(groups, function (k, group) {
       newItems.push(that.aggregate(group.items, options.properties, options.keys));
     });
-
+  
     return new Collection({properties: newProps, items: newItems});
   }
-};//-----------------------------------------------------------------------------
+};
+
+//-----------------------------------------------------------------------------
 // Measure
 //-----------------------------------------------------------------------------
 
@@ -363,7 +563,7 @@ Chart.prototype = {
         identityKeys = this.identityKeys;
 
     return $.map(identityKeys, function (s) {
-      return item.attributes[s];
+      return item.properties(s).first().value;
     }).join(", ");
   },
   getFirstPropertyKey: function () {
@@ -545,7 +745,9 @@ Scatterplot.prototype.render = function() {
       .visible(function() { return this.parent.active(); });
   vis.render();
 
-};// register
+};
+
+// register
 Chart.visualizations['table'] = {
   className: 'Table',
   create: function(chart) {
@@ -583,7 +785,9 @@ Table.prototype = {
     
     $('#chart').html(str);
   }
-};//-----------------------------------------------------------------------------
+};
+
+//-----------------------------------------------------------------------------
 // Templates
 // TODO: 
 // Find a better place for templates — multiline string literals suck!
@@ -956,10 +1160,8 @@ BrowsingSession.prototype = {
   }
 };
 
-
 $(function() {
   // fire up the browser by creating a new browsing session
-  
   var collectionId = $('#collection_id').text();
   $.ajax({
     url: '/collections/'+collectionId+'.json',

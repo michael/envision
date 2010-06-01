@@ -1,5 +1,29 @@
 <% content_for :head do %>
-  <script src="/javascripts/application.js"></script>
+  <!-- production -- >
+  <!-- <script src="/javascripts/application.js"></script>-->
+  
+  <!-- debug -->
+  <script src="/javascripts/src/intro.js"></script>
+  <script src="/javascripts/src/util.js"></script>
+  <script src="/javascripts/src/node/src/node.js"></script>
+  <script src="/javascripts/src/collection/src/modifiers.js"></script>
+  <script src="/javascripts/src/collection/src/aggregators.js"></script>
+  <script src="/javascripts/src/collection/src/value.js"></script>
+  <script src="/javascripts/src/collection/src/item.js"></script>
+  <script src="/javascripts/src/collection/src/property.js"></script>
+  <script src="/javascripts/src/collection/src/collection.js"></script>
+  <script src="/javascripts/src/collection/src/operations.js"></script>
+  <script src="/javascripts/src/collection/src/collection_view.js"></script>
+  <script src="/javascripts/src/chart/src/measure.js"></script>
+  <script src="/javascripts/src/chart/src/chart.js"></script>
+  <script src="/javascripts/src/chart/src/visualizations/barchart.js"></script>
+  <script src="/javascripts/src/chart/src/visualizations/scatterplot.js"></script>
+  <script src="/javascripts/src/chart/src/visualizations/table.js"></script>
+  <script src="/javascripts/src/templates.js"></script>
+  <script src="/javascripts/src/facets.js"></script>
+  <script src="/javascripts/src/view.js"></script>
+  <script src="/javascripts/src/browse.js"></script>
+  
 <% end %>
 <% if @collection %>
 <section id="trail">

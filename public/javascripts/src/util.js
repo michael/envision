@@ -37,6 +37,7 @@ Object.create = function (o) {
 // ["a","b", "c"].eachItem(function(item, index) {
 //   console.log(item);
 // });
+
 if (!Array.prototype.eachItem) {
   Array.prototype.eachItem = function (f, o) {
     var n = this.length || 0,

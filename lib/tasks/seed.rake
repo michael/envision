@@ -31,7 +31,7 @@ namespace :redis do
     c2.load
     
     # Create an example view
-    view = View.new(:name => "Artist Co-occurences")
+    view = View.new(:name => "Artist Co-occurrences")
     view.collection = c2
     view.save
     

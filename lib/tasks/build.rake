@@ -8,6 +8,7 @@ FILES = [
   "src/util.js",
   "src/chart/src/collection/src/modifiers.js",
   "src/chart/src/collection/src/aggregators.js",
+  "src/chart/src/collection/src/node.js",
   "src/chart/src/collection/src/item.js",
   "src/chart/src/collection/src/property.js",
   "src/chart/src/collection/src/collection.js",
@@ -34,6 +35,6 @@ namespace :build do
     puts "application.js successfully created."
     
     # jslint and compress
-    sh "juicer merge #{JS_DIR}/application.js --force -o #{JS_DIR}/application.min.js"
+    # sh "juicer merge #{JS_DIR}/application.js --force -o #{JS_DIR}/application.min.js"
   end
 end
