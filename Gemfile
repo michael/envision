@@ -3,6 +3,7 @@ source 'http://rubygems.org'
 gem 'rails', '3.0.0.beta3'
 gem 'redis'
 gem 'mustache'
+gem 'json'
 
 # Use unicorn as the web server
 # gem 'unicorn'

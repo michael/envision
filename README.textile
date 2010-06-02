@@ -176,8 +176,8 @@ The JSON exchange format conforms to the underlying object model and reads as fo
         "unqiue": true
       }
     },
-    "items": [
-      {
+    "items": {
+      "arg": {
         "name": "Argentina",
         "official_language": "Spanish Language",
         "form_of_government": [
@@ -191,7 +191,7 @@ The JSON exchange format conforms to the underlying object model and reads as fo
         "date_founded": "1816-07-09"
       },
       ...
-    ],
+    },
   }
 </code>
 </pre>

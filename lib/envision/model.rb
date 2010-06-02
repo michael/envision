@@ -149,7 +149,7 @@ module Envision
     end
 
     def self.redis
-      @redis ||= Redis.new
+      @redis ||= Redis.new(:port => 6380)
     end
 
     def redis

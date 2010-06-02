@@ -13,22 +13,15 @@ namespace :redis do
     Collection.redis.flushdb
     
     # Register a sample collection
-    c = Collection.create(:name => "World's countries", :uri => "http://localhost:4567/countries")
-    
-    # Load the collection
-    c.load
+    c = Collection.create(:name => "World's countries", :uri => "http://collections.quasipartikel.at/countries")
     
     # Create an example view
     view = View.new(:name => "Example View")
     view.collection = c
     view.save
     
-    
     # Register another sample collection
-    c2 = Collection.create(:name => "Last.fm playlists", :uri => "http://localhost:4567/playlists")
-    
-    # Load the collection
-    c2.load
+    c2 = Collection.create(:name => "Last.fm playlists", :uri => "http://collections.quasipartikel/playlists")
     
     # Create an example view
     view = View.new(:name => "Artist Co-occurrences")
