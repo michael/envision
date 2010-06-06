@@ -63,7 +63,7 @@ $(function() {
     url: '/collections/'+collectionId+'.json',
     dataType: 'json',
     success: function(json) {
-      var bs = new BrowsingSession(json)
+      var bs = new BrowsingSession(json);
     }
   });
 });
