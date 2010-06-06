@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Envision // A Collection Explorer</title>
+  <title>Envision / Collection Explorer</title>
   <%= stylesheet_link_tag :all %>
   <%= csrf_meta_tag %>
   <script src="/javascripts/jquery-1.4.2.js"></script>
+  <script src="/javascripts/sammy/sammy.js"></script>
   <script src="/javascripts/mustache.js"></script>
   <script src="/javascripts/date.js"></script>
-  <script src="/javascripts/protovis-d3.1.js"></script>
+  <script src="/javascripts/protovis-d3.2.js"></script>
   
   <%= yield :head %>
 </head>
@@ -15,7 +16,8 @@
 <div id="wrapper">
   <section id="header">
     <h1>Envision&#8482;</h1>
-    <p>A Collection Explorer</p>
+    <p>Collection Explorer (<a href="http://github.com/michael/envision">a work in progress...</a>)</p>
+    
   </section>
   <%= yield %>
 </div>

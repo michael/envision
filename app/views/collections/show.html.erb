@@ -12,16 +12,21 @@
   <script src="/javascripts/src/collection/src/item.js"></script>
   <script src="/javascripts/src/collection/src/property.js"></script>
   <script src="/javascripts/src/collection/src/collection.js"></script>
-  <script src="/javascripts/src/collection/src/operations.js"></script>
+  <script src="/javascripts/src/collection/src/operations/co_occurrences.js"></script>
+  <script src="/javascripts/src/collection/src/operations/group.js"></script>
+  
   <script src="/javascripts/src/collection/src/collection_view.js"></script>
   <script src="/javascripts/src/chart/src/measure.js"></script>
   <script src="/javascripts/src/chart/src/chart.js"></script>
   <script src="/javascripts/src/chart/src/visualizations/barchart.js"></script>
+  <script src="/javascripts/src/chart/src/visualizations/barchart_matrix.js"></script>
   <script src="/javascripts/src/chart/src/visualizations/scatterplot.js"></script>
   <script src="/javascripts/src/chart/src/visualizations/table.js"></script>
   <script src="/javascripts/src/templates.js"></script>
   <script src="/javascripts/src/facets.js"></script>
   <script src="/javascripts/src/view.js"></script>
+  
+  <!-- the Envision application -->
   <script src="/javascripts/src/browse.js"></script>
   
 <% end %>
@@ -38,6 +43,7 @@
 <section id="facets">
 </section>
 <section id="results">
+  
 </section>
 <span style="display: none" id="collection_id"><%= @collection.id %></span>
 <% else %>
