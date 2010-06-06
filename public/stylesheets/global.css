@@ -77,7 +77,6 @@ section#facets { background: #fff; position: absolute; top: 50px; bottom: 0px; w
 section#results { background: #fff; position: absolute; left: 325px; top: 50px; bottom: 0px; right: 0px; overflow: auto; }
 #chart { float: left; overflow: auto; }
 
-
 /*
 -----------------------------------------
  View Settings
@@ -96,6 +95,11 @@ section#results { background: #fff; position: absolute; left: 325px; top: 50px; 
 #view-settings li:hover { background: #eee; }
 #view-settings li a { float: left; text-decoration: none; }
 #view-settings li span { float: right; }
+
+#view-settings div.param { overflow: auto; }
+#view-settings #operations label { width: 20px; float: left; }
+#view-settings #operations input { width: 20px; float: right; }
+#view-settings #operation_params select { width: 60px; float: right; }
 
 /*
 -----------------------------------------

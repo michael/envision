@@ -18,7 +18,7 @@ var Templates = {
     {{/facets}}',
   items: ' \
     {{#items}} \
-      aa{{.}} \
+      {{.}} \
     {{/items}}',
   view: ' \
     <div id="chart">test</div> \
@@ -26,36 +26,31 @@ var Templates = {
       <div id="measures"> \
         <h3>Measures</h3> \
         <select id="measure_keys" multiple="multiple" name="measure_keys[]"> \
-          {{#properties}} \
+          {{#nested_properties}} \
             <option {{#measureKeySelected}}selected="selected"{{/measureKeySelected}} value="{{key}}">{{name}} ({{type}})</option> \
-          {{/properties}} \
+          {{/nested_properties}} \
         </select> \
-      </div> \
-      <div id="grouping" style="display: none"> \
-        <h3>Group By</h3> \
-        <select id="group_keys" multiple="multiple" name="group_keys[]"> \
-          {{#properties}} \
-            <option {{#groupKeySelected}}selected="selected"{{/groupKeySelected}} value="{{key}}">{{name}} ({{type}})</option> \
-          {{/properties}} \
-        </select> \
-        Aggregate (SUM) <input id="aggregated" name="aggregated" type=checkbox value="1"/> \
       </div> \
       <div id="operations"> \
-        <h3>Operations</h3> \
-        <select id="operations" name="operation"> \
-          <option value="">- - - </option> \
-          <option value="getCoOccurrences">Get Co-Occurrences</option> \
+        <h3>Operation</h3> \
+        <select id="operation" name="operation"> \
+          <option value="">No selection</option> \
+          {{#operations}} \
+            <option value="{{key}}">{{label}}</option> \
+          {{/operations}} \
         </select> \
+        <div id="operation_params"> \
+        </div> \
       </div> \
       <div id="visualizations"> \
-        <h3>Visualisierung</h3> \
+        <h3>Visualization</h3> \
         <select id="visualization" name="visualization"> \
           {{#visualizations}} \
             <option {{#selected}}selected="selected"{{/selected}} value="{{code}}">{{className}}</option> \
           {{/visualizations}} \
         </select> \
       </div> \
-      <div id="identification" style="display: none;"> \
+      <div id="identification"> \
         <h3>Identify By</h3> \
         <select id="identity_keys" multiple="multiple" name="identity_keys[]"> \
           {{#properties}} \
@@ -65,3 +60,57 @@ var Templates = {
       </div> \
     </div>'
 };
+
+// Templates for various param types that are used for pluggable operations
+
+Templates.params = {};
+
+// property selection
+Templates.params.property = ' \
+  <div class="param"> \
+    <label>{{name}}</label> \
+    <select name="{{key}}"> \
+      <option value="">- - -</option> \
+      {{#properties}} \
+        <option value="{{key}}">{{name}}</option> \
+      {{/properties}} \
+    </select> \
+  </div> \
+';
+
+// number picker
+Templates.params.number = ' \
+  <div class="param"><label>{{name}}</label> \
+  <input type="text" name="{{key}}"/></div> \
+';
+
+// property list picker
+Templates.params.property_list = ' \
+  <div class="param"> \
+    <label>{{name}}</label> \
+    <select name="{{key}}"> \
+      <option value="">- - -</option> \
+      {{#properties}} \
+        <option value="{{key}}">{{name}}</option> \
+      {{/properties}} \
+    </select> \
+  </div> \
+';
+
+// aggregator picker
+Templates.params.aggregator = ' \
+  <div class="param"><label>{{name}}</label> \
+  <select name="{{key}}"> \
+    <option value="">- - -</option> \
+    {{#aggregators}} \
+      <option value="{{key}}">{{name}}</option> \
+    {{/aggregators}} \
+  </select> \
+  </div> \
+';
+
+// enter a string
+Templates.params.string = ' \
+  <div class="param"><label>{{name}}</label> \
+  <input type="text" name="{{key}}"/></div> \
+';
