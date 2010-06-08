@@ -1,6 +1,10 @@
 class CollectionsController < ApplicationController
   def index
     @collections = Collection.all
+    respond_to do |format|
+      format.html
+      format.json { render :json => @collections.to_json }
+    end
   end
   
   def show

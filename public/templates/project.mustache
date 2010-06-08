@@ -1,0 +1,11 @@
+<h2>{{name}}</h2>
+<p>{{descr}}</p>
+
+<ul>
+{{#sheets}}
+  <li>
+    <h3><a href="#/projects/{{project_id}}/sheets/{{id}}">{{name}}</a></h3>
+    <p>{{descr}}</p>
+  </li>
+{{/sheets}}
+</ul>

@@ -3,9 +3,9 @@
 // holds the current facet state (selected facet choices) -> FilterCriteria
 //-----------------------------------------------------------------------------
 
-var Facets = function(options) {
+var Facets = function(collectionView) {
   this.selectedFacet = null;
-  this.collectionView = options.collectionView;
+  this.collectionView = collectionView;
 };
 
 Facets.prototype = {
@@ -28,28 +28,6 @@ Facets.prototype = {
   render: function() {
     var that = this;
     
-    var facetView = {
-      facets: function() {
-        result = [];
-      
-        var properties = that.collectionView.get("properties");
-        $.each(properties, function(key, property) {
-          result.push({property: key, property_name: property.name(), facet_choices: function() {
-            var result = [];
-            var values = property.list("values").nodes;
-            $.each(values, function(index, value) {
-              // TODO: get item count
-              result.push({value: value.val, item_count: '' });
-            });
-            return result;
-          }});
-        });
-        
-        return result;
-      }
-    };
-    
-    var facets_html = $.mustache($.template('facets'), facetView);
     $('#facets').html(facets_html);
     this.select($(".facet:first"));
     this.attachEvents();

@@ -11,6 +11,30 @@ class Collection < Envision::Model
   has_many :items, Item
   has_many :views, View
   
+  def to_hash
+    {
+      :id => id,
+      :name => name,
+      :descr => descr,
+      :uri => uri
+    }
+  end
+  
+  def to_hash_with_content
+    result = JSON.parse(Net::HTTP.get_response(::URI.parse(uri)).body)
+    
+    result.merge!({
+      :id => id,
+      :name => name,
+      :descr => descr,
+      :uri => uri
+    })
+  end
+  
+  def to_json
+    JSON.pretty_generate(to_hash)
+  end
+  
   # loads the collection by fetching it from the given uri
   def load
     response = Net::HTTP.get_response(URI.parse(uri)).body

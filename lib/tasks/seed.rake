@@ -12,21 +12,38 @@ namespace :redis do
     # Empty the database
     Collection.redis.flushdb
     
-    # Register a sample collection
+    # Create some users
+    u = User.create(:username => "michael", :first_name => "Michael", :last_name => "Aufreiter")
+    u2 = User.create(:username => "oliver", :first_name => "Oliver", :last_name => "")
+    
+    # Create some collections
     c = Collection.create(:name => "World's countries", :uri => "http://collections.quasipartikel.at/countries")
+    c2 = Collection.create(:name => "Last.fm playlists", :uri => "http://collections.quasipartikel.at/playlists")
     
-    # Create an example view
-    view = View.new(:name => "Example View")
-    view.collection = c
-    view.save
+    # Create some projects
+    p = Project.new(:name => "Comparing the world's countries")
+    p.user = u
+    p.save
     
-    # Register another sample collection
-    c2 = Collection.create(:name => "Last.fm playlists", :uri => "http://collections.quasipartikel/playlists")
+    p2 = Project.new(:name => "Music Artist similarities")
+    p2.user = u
+    p2.save
     
-    # Create an example view
-    view = View.new(:name => "Artist Co-occurrences")
-    view.collection = c2
-    view.save
+    # Create some sheets
+    s = Sheet.new(:name => "Population vs. GDP")
+    s.project = p
+    s.collection = c
+    s.save
+    
+    s2 = Sheet.new(:name => "Area vs. Population per Currency")
+    s2.project = p
+    s2.collection = c
+    s2.save
+    
+    s3 = Sheet.new(:name => "Co-Occurrence Analysis")
+    s3.collection = c2
+    s3.project = p2
+    s3.save
     
     stop = Time.now
     runtime = stop - start

@@ -2,7 +2,7 @@
   <!-- production -- >
   <!-- <script src="/javascripts/application.js"></script>-->
   
-  <!-- debug -->
+  <!-- development -->
   <script src="/javascripts/src/intro.js"></script>
   <script src="/javascripts/src/util.js"></script>
   <script src="/javascripts/src/node/src/node.js"></script>
@@ -22,30 +22,15 @@
   <script src="/javascripts/src/chart/src/visualizations/barchart_matrix.js"></script>
   <script src="/javascripts/src/chart/src/visualizations/scatterplot.js"></script>
   <script src="/javascripts/src/chart/src/visualizations/table.js"></script>
+  
   <script src="/javascripts/src/templates.js"></script>
   <script src="/javascripts/src/facets.js"></script>
-  <script src="/javascripts/src/view.js"></script>
+  <script src="/javascripts/src/sheet.js"></script>
   
   <!-- the Envision application -->
-  <script src="/javascripts/src/browse.js"></script>
-  
+  <script src="/javascripts/src/envision.js"></script>
 <% end %>
-<% if @collection %>
-<section id="trail">
-  <ul id="available-views">
-    <% @collection.views.each do |v| %>
-      <li id="view_<%= v.id %>" class="view<%= @collection.views.first.id == v.id ? " selected" : "" %>">
-        <a href="<%= collection_view_path(@collection.id, v.id)%>"><%= v.name %></a>
-      </li>
-    <% end %>
-  </ul>
-</section>
-<section id="facets">
-</section>
-<section id="results">
-  
-</section>
-<span style="display: none" id="collection_id"><%= @collection.id %></span>
-<% else %>
-  Collection does not exist
-<% end %>
+
+<section id="navigation"></section>
+<section id="facets"></section>
+<section id="results"></section>

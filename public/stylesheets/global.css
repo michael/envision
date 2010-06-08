@@ -34,18 +34,18 @@ section#header p { font-family: 'Times'; margin: 0; padding: 0; margin-left: 0px
 
 /*
 -----------------------------------------
- Trail
+ Navigation
 -----------------------------------------
 */
 
-#trail { background: #fff; position: absolute; left: 325px; top: 0px; right: 0px; height: 22px; padding: 10px; border-bottom: 2px solid #000; }
+#navigation { background: #fff; position: absolute; left: 325px; top: 0px; right: 0px; height: 22px; padding: 10px; border-bottom: 2px solid #000; }
 
 
-ul#available-views { margin-left: 0; padding-left: 0; white-space: nowrap; }
-ul#available-views li { display: inline; list-style-type: none; }
-ul#available-views a { font-family: 'Times'; font-style: italic; font-size: 14px; padding: 3px 10px; background: #eee;}
+ul#available-sheets { margin-left: 0; padding-left: 0; white-space: nowrap; }
+ul#available-sheets li { display: inline; list-style-type: none; }
+ul#available-sheets a { font-family: 'Times'; font-style: italic; font-size: 14px; padding: 3px 10px; background: #eee;}
 
-ul#available-views a:hover, ul#available-views li.selected a { color: #fff; background-color: #000; text-decoration: none; }
+ul#available-sheets a:hover, ul#available-sheets li.selected a { color: #fff; background-color: #000; text-decoration: none; }
 
 /*
 -----------------------------------------
@@ -79,27 +79,27 @@ section#results { background: #fff; position: absolute; left: 325px; top: 50px; 
 
 /*
 -----------------------------------------
- View Settings
+ Sheet Settings
 -----------------------------------------
 */
 
-#view-settings { top: 0px; float: right; width: 190px;}
-#view-settings h3 { color: white; padding: 3px; font-family: 'Times'; font-style: italic; background: #006fa4; }
-#view-settings h3:hover { background: black; }
+#sheet-settings { top: 0px; float: right; width: 190px;}
+#sheet-settings h3 { color: white; padding: 3px; font-family: 'Times'; font-style: italic; background: #006fa4; }
+#sheet-settings h3:hover { background: black; }
 
 /* Settings selection */
 
-#view-settings ul { margin: 0px; padding: 0px; }
-#view-settings li { list-style: none; margin: 0; padding: 0.25em; border-bottom: 1px solid gray; overflow: auto;}
-#view-settings ul.selected li {background: #ccc;}
-#view-settings li:hover { background: #eee; }
-#view-settings li a { float: left; text-decoration: none; }
-#view-settings li span { float: right; }
+#sheet-settings ul { margin: 0px; padding: 0px; }
+#sheet-settings li { list-style: none; margin: 0; padding: 0.25em; border-bottom: 1px solid gray; overflow: auto;}
+#sheet-settings ul.selected li {background: #ccc;}
+#sheet-settings li:hover { background: #eee; }
+#sheet-settings li a { float: left; text-decoration: none; }
+#sheet-settings li span { float: right; }
 
-#view-settings div.param { overflow: auto; }
-#view-settings #operations label { width: 20px; float: left; }
-#view-settings #operations input { width: 20px; float: right; }
-#view-settings #operation_params select { width: 60px; float: right; }
+#sheet-settings div.param { overflow: auto; }
+#sheet-settings #operations label { width: 20px; float: left; }
+#sheet-settings #operations input { width: 20px; float: right; }
+#sheet-settings #operation_params select { width: 60px; float: right; }
 
 /*
 -----------------------------------------

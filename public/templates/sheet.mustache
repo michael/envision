@@ -1,0 +1,38 @@
+<div id="chart"></div>
+<div id="sheet-settings">
+  <div id="measures">
+    <h3>Measures</h3>
+    <select id="measure_keys" multiple="multiple" name="measure_keys[]">
+      {{#nested_properties}}
+        <option {{#measureKeySelected}}selected="selected"{{/measureKeySelected}} value="{{key}}">{{name}} ({{type}})</option>
+      {{/nested_properties}}
+    </select>
+  </div>
+  <div id="operations">
+    <h3>Operation</h3>
+    <select id="operation" name="operation"> \
+      <option value="">No selection</option>
+      {{#operations}}
+        <option value="{{key}}">{{label}}</option>
+      {{/operations}}
+    </select>
+    <div id="operation_params">
+    </div>
+  </div>
+  <div id="visualizations">
+    <h3>Visualization</h3>
+    <select id="visualization" name="visualization">
+      {{#visualizations}}
+        <option {{#selected}}selected="selected"{{/selected}} value="{{code}}">{{class_name}}</option>
+      {{/visualizations}}
+    </select>
+  </div>
+  <!--<div id="identification">
+    <h3>Identify By</h3>
+    <select id="identity_keys" multiple="multiple" name="identity_keys[]">
+      {{#properties}}
+        <option {{#identityKeySelected}}selected="selected"{{/identityKeySelected}} value="{{key}}">{{name}} ({{type}})</option>
+      {{/properties}}
+    </select>
+  </div>-->
+</div>

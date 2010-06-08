@@ -1,6 +1,16 @@
 Envision::Application.routes.draw do |map|
-  
   root :to => 'collections#index'
+
+  resources :templates
+  
+  resources :users do
+    resources :projects
+  end
+    
+  resources :projects do
+    resources :sheets
+  end
+  
   resources :collections do
     member do
       put :update_filters
