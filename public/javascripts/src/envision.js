@@ -3,7 +3,6 @@ var envision = $.sammy(function() {
   this.use(Sammy.Mustache);
   this.use(Sammy.JSON);
 
-  
   this.before(function() {
     // load the items
     var context = this;
@@ -99,7 +98,6 @@ var envision = $.sammy(function() {
       $('#results').html(html);
     });
     
-    this.partial('templates/item_detail.template');
   });
   
   //-----------------------------------------------------------------------------
@@ -112,6 +110,8 @@ var envision = $.sammy(function() {
       // The Sheet object is directly used as the view for rendering the sheet settings template
       app.collectionView = new CollectionView(new Collection(sheet.collection), {});
       app.sheet = new Sheet(app, app.collectionView, sheet);
+      
+      // app.collectionView.performOperation('coOccurrencesPachet', {property: 'artists', knn: 5});
       
       // keep the state of facets
       app.facets = new Facets(app.collectionView);
