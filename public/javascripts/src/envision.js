@@ -3,7 +3,6 @@ var envision = $.sammy(function() {
   this.use(Sammy.Mustache);
   this.use(Sammy.JSON);
 
-  
   this.before(function() {
     // load the items
     var context = this;
@@ -99,7 +98,6 @@ var envision = $.sammy(function() {
       $('#results').html(html);
     });
     
-    this.partial('templates/item_detail.template');
   });
   
   //-----------------------------------------------------------------------------

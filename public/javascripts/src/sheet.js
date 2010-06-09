@@ -115,9 +115,8 @@ Sheet.prototype.render = function() {
   // transform multiselect boxes
   this.transformMultiselect($('#measure_keys'));
 
-  
   // render facets
-  var html = Mustache.to_html(this.app.templates['facets.mustache'], this.view());
+  html = Mustache.to_html(this.app.templates['facets.mustache'], this.view());
   $('#facets').html(html);
   // select first facet
   $("#facets .facet:first").toggleClass('selected');
@@ -158,7 +157,7 @@ Sheet.prototype.view = function() {
   // facets
   $.each(this.collectionView.get('properties'), function(key, property) {
     var facet_choices = property.list("values").map(function(value) {
-      return {value: value.val, item_count: '-'}
+      return {value: value.val, item_count: '-'};
     });
     view.facets.push({
       property: key,
@@ -189,7 +188,7 @@ Sheet.prototype.view = function() {
     });
     
     if (p.type() === 'collection') {
-      $.each(p.collection_properties, function(k, p) {
+      $.each(p.collection_properties, function(k, p) {
         view.nested_properties.push({
           key: key+"::"+k,
           name: "--- "+p.name,
