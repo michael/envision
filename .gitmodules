@@ -7,3 +7,6 @@
 [submodule "public/javascripts/src/collection"]
 	path = public/javascripts/src/collection
 	url = git@github.com:michael/collection.git
+[submodule "public/javascripts/src/sorted_hash"]
+	path = public/javascripts/src/sorted_hash
+	url = git://github.com/michael/sorted_hash

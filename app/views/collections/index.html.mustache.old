@@ -1,9 +1,0 @@
-<h2>Available Collections</h2>
-
-{{#any_collections?}}
-  <ul>
-  {{#collections}}
-    <li><a href="/collections/{{id}}">{{name}}</a></li>
-  {{/collections}}
-  </ul>
-{{/any_collections?}}
