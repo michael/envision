@@ -1,15 +1,18 @@
 // holds the Sheet state
 // selected measure keys, visualization etc.
-var Sheet = function(app, collectionView, options) {
+var Sheet = function(app, collection, options) {
   var that = this;
   
   this.app = app; // the sammy application context
-  this.collectionView = collectionView;
+  this.collection = collection;
+  
+  this.commands = [];
   this.measureKeys = [];
   this.facets = [];
   this.identityKeys = options.identity_keys || [];
   this.aggregated = false;
   this.operation = null;
+  this.selectedFacets = {};
   
   // TODO: use table as the standard visualization
   this.visualization = options.visualization || 'table';
@@ -22,7 +25,58 @@ var Sheet = function(app, collectionView, options) {
   $.each(options.measures, function(index, property) {
     that.measureKeys.push(property);
   });
+  
+  // register commands
+  $.each(options.commands, function(index, command) {
+    that.applyCommand(command);
+  });
+  
+  // init facets
+  this.facets = new Facets(app, this);
 };
+
+
+Sheet.prototype.undo = function() {
+  this.commands.pop().unexecute();
+  this.render();
+};
+
+// Takes a command spec, constructs the command and executes it
+// TODO: clean up that search and replace madness
+Sheet.prototype.applyCommand = function(spec) {
+  var cmd;
+  if (spec.command === 'add_criterion') {
+    cmd = new AddCriterion(this, spec.options);
+  } else if(spec.command === 'remove_criterion') {
+    cmd = new RemoveCriterion(this, spec.options);
+  } else if (spec.command === 'perform_operation') {
+    cmd = new PerformOperation(this, spec.options);
+  }
+  
+  // insertion position
+  var pos = undefined;
+  $.each(this.commands, function(index, c) {
+    if (c.matchesInverse(cmd)) {
+      pos = index;
+    }
+  });
+  
+  if (pos >= 0) {
+    // restore state
+    this.collection = this.commands[pos].collection;
+    // remove matched inverse command
+    this.commands.splice(pos, 1);
+    // execute all follow-up commands [pos..this.commands.length-1]
+    for (var i=pos; i < this.commands.length; i++) {
+      this.commands[i].execute();
+    }
+  } else {
+    this.commands.push(cmd);
+    cmd.execute();
+  }
+  return cmd;
+};
+
 
 Sheet.prototype.updateCanvasSize = function() {
   $('#chart').width($('#results').width()-$('#sheet-settings').width()-30);
@@ -46,15 +100,10 @@ Sheet.prototype.update = function() {
     $.each(params_as_array, function(index, param) {
       params[param.name] = param.value;
     });
-    
-    if (this.collectionView.performOperation(this.operation, params)) {
+    if (this.collection.performOperation(this.operation, params)) {
       // after each operation the view needs to be re-rendered
       that.render();
     };
-    
-  } else {
-    // TODO: don't reset everything
-    this.collectionView.reset();
   }
 
   this.renderChart();
@@ -72,6 +121,7 @@ Sheet.prototype.update = function() {
     }
   });
 };
+
 
 Sheet.prototype.transformMultiselect = function(element) {
   element.hide(); // hide but keep the logic
@@ -103,9 +153,7 @@ Sheet.prototype.transformMultiselect = function(element) {
   });
 };
 
-
 Sheet.prototype.render = function() {
-  // render sheet (chart + sheet-settings)
   var html = Mustache.to_html(this.app.templates['sheet.mustache'], this.view());
   $('#results').html(html);
   this.updateCanvasSize();
@@ -114,19 +162,14 @@ Sheet.prototype.render = function() {
   
   // transform multiselect boxes
   this.transformMultiselect($('#measure_keys'));
-
-  // render facets
-  html = Mustache.to_html(this.app.templates['facets.mustache'], this.view());
-  $('#facets').html(html);
-  // select first facet
-  $("#facets .facet:first").toggleClass('selected');
-
+  // delegate to facets renderer
+  this.facets.render();
 };
 
 Sheet.prototype.renderChart = function() {
   $('#chart').empty();
   var chart = new Chart($('#chart'), {
-    collectionView: this.collectionView,
+    collectionView: this.collection,
     plotOptions: {
       visualization: this.visualization,
       identifyBy: this.identityKeys,
@@ -142,6 +185,8 @@ Sheet.prototype.renderChart = function() {
 
 Sheet.prototype.view = function() {
   var that = this;
+  var properties = that.collection.all("properties");
+  
   // TODO: does caching the view make sense here?
   
   // expose view state
@@ -154,40 +199,28 @@ Sheet.prototype.view = function() {
     visualization: this.visualization
   };
   
-  // facets
-  $.each(this.collectionView.get('properties'), function(key, property) {
-    var facet_choices = property.list("values").map(function(value) {
-      return {value: value.val, item_count: '-'};
-    });
-    view.facets.push({
-      property: key,
-      property_name: property.name(),
-      facet_choices: facet_choices
-    });
-  });
-  
   // properties
-  $.each(that.collectionView.get("properties"), function(key, p) {    
+  properties.eachKey(function(key, p) {
     view.properties.push({
       key: key,
-      name: p.name(),
-      type: p.type(),
+      name: p.name,
+      type: p.type,
       measureKeySelected: $.inArray(key, that.measureKeys) > -1,
       identityKeySelected: $.inArray(key, that.identityKeys) > -1
     });
   });
   
   // nested_properties
-  $.each(that.collectionView.get("properties"), function(key, p) {    
+  properties.eachKey(function(key, p) {
     view.nested_properties.push({
       key: key,
-      name: p.name(),
-      type: p.type(),
+      name: p.name,
+      type: p.type,
       measureKeySelected: $.inArray(key, that.measureKeys) > -1,
       identityKeySelected: $.inArray(key, that.identityKeys) > -1
     });
     
-    if (p.type() === 'collection') {
+    if (p.type === 'collection') {
       $.each(p.collection_properties, function(k, p) {
         view.nested_properties.push({
           key: key+"::"+k,
@@ -199,16 +232,16 @@ Sheet.prototype.view = function() {
       });
     }
   });
-  
-  // operations
-  $.each(Collection.operations, function(key, operation) {
+    
+  // transformers
+  $.each(Collection.transformers, function(key, operation) {
     view.operations.push({
       key: key,
       label: operation.label,
       selected: false
     });
   });
-  
+    
   // visualizations
   $.each(Chart.visualizations, function(key, vis) {
     view.visualizations.push({

@@ -28,6 +28,11 @@ var envision = $.sammy(function() {
     app.sheet.update();
   });
   
+  this.bind('add_criterion', function(e, options) {
+    app.sheet.applyCommand({command: 'add_criterion', options: options });
+    app.sheet.render();
+  });
+  
   // TODO: modularize!
   this.bind('switch_operation', function(e, data) {
     var operation = app.sheet.operation = $('select#operation').val(),
@@ -73,6 +78,11 @@ var envision = $.sammy(function() {
     $('#operation_params input').change(function() {
       app.trigger('update_sheet');
     });
+    
+    $('#undo').click(function() {
+      app.sheet.undo();
+      return false;
+    });
   });
   
   //-----------------------------------------------------------------------------
@@ -97,7 +107,6 @@ var envision = $.sammy(function() {
       var html = Mustache.to_html(app.templates['project.mustache'], project);
       $('#results').html(html);
     });
-    
   });
   
   //-----------------------------------------------------------------------------
@@ -108,34 +117,41 @@ var envision = $.sammy(function() {
     $.getJSON('projects/'+ctx.params['project_id']+'/sheets/'+ctx.params['id']+'.json', function(sheet) {
       // We construct a Sheet object from the retrieved JSON
       // The Sheet object is directly used as the view for rendering the sheet settings template
-      app.collectionView = new CollectionView(new Collection(sheet.collection), {});
-      app.sheet = new Sheet(app, app.collectionView, sheet);
-      
-      // app.collectionView.performOperation('coOccurrencesPachet', {property: 'artists', knn: 5});
-      
-      // keep the state of facets
-      app.facets = new Facets(app.collectionView);
+      app.collection = new Collection(sheet.collection);
+      app.sheet = new Sheet(app, app.collection, sheet);
       app.sheet.render();
-      
-      $.getJSON('projects/'+ctx.params['project_id']+'.json', function(project) {
+      $.getJSON('projects/'+ctx.params['project_id']+'.json', function (project) {
         // render sheet navigation
         var html = Mustache.to_html(app.templates['sheets.mustache'], project);
         $('#navigation').html(html);
       });
-      
     });
   });
 
+  this.get('#/add_criterion/:property/:operator/:value', function(ctx) {
+    app.trigger('add_criterion', {
+      property: ctx.params['property'],
+      operator: ctx.params['operator'],
+      value: ctx.params['value']
+    });
+  });
+  
+  this.get('#/select_facet/:property', function(ctx) {
+    app.sheet.facets.select($('#facet_'+ctx.params['property']));
+  });
+  this.get('#/redo', function(ctx) {
+    console.log('not yet implemented.');
+  });
+  
   //-----------------------------------------------------------------------------
   // Misc
   //-----------------------------------------------------------------------------
 
   // keep everything in shape during resize
   $(window).resize(function () {
-    // that.facets.updatePanelHeight();
+    app.sheet.facets.updatePanelHeight();
     app.sheet.updateCanvasSize();
   });
-  
 });
 
 $(function() {

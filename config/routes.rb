@@ -11,13 +11,7 @@ Envision::Application.routes.draw do |map|
     resources :sheets
   end
   
-  resources :collections do
-    member do
-      put :update_filters
-      put :load
-    end
-    resources :views
-  end
+  resources :collections
     
   # The priority is based upon order of creation:
   # first created -> highest priority.

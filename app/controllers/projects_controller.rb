@@ -1,14 +1,11 @@
 class ProjectsController < ApplicationController
-
   def index
     @projects = Project.all
     
-    render :text => @projects.to_json
-    
-    # respond_to do |format|
-    #   format.html { render :json => @projects.to_json }
-    #   format.json { render :json => @projects.to_json }
-    # end
+    respond_to do |format|
+      format.html { render :json => JSON.pretty_generate(@projects.map { |p| p.to_hash }) }
+      format.json { render :json => JSON.pretty_generate(@projects.map { |p| p.to_hash }) }
+    end
   end
   
   def show

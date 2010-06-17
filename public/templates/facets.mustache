@@ -1,9 +1,9 @@
 {{#facets}}
   <div class="facet" id="facet_{{property}}">
-    <h3><a href="#select_facet">{{property_name}}</a></h3>
+    <h3><a href="#/select_facet/{{property}}">{{property_name}}</a></h3>
     <ul class="facet-choices">
       {{#facet_choices}}
-        <li><a class="facet-choice" href="#/select_facet_choice">{{value}}</a><span class="item-count">({{item_count}})</span></li>
+        <li><a class="facet-choice" href="#/add_criterion/{{property}}/CONTAINS/{{value}}">{{value}}</a><span class="item-count">({{item_count}})</span></li>
       {{/facet_choices}}
     </ul>
   </div>

@@ -1,6 +1,5 @@
 require 'test_helper'
 
-
 ##########################################
 # Models
 ##########################################
@@ -18,7 +17,6 @@ class User < Envision::Model
   field :name
   has_many :projects, Project
 end
-
 
 ##########################################
 # Models

@@ -20,7 +20,8 @@ class Sheet < Envision::Model
       :visualization => visualization,
       :identity_keys => identity_keys,
       :group_keys => group_keys,
-      :aggregated => aggregated
+      :aggregated => aggregated,
+      :commands => []
     }
   end
   
