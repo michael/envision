@@ -1,0 +1,14 @@
+body {font-family: 'Helvetica Neue'; font-size: 12px; color: #666;}
+a { color: #555; }
+
+#wrapper {width: 200px;}
+
+ul.ui-selectbox { margin: 0px; padding: 0px; }
+ul.ui-selectbox li { list-style: none; margin: 0; padding: 0; overflow: auto;}
+ul.ui-selectbox li.selected { color: #000; font-weight: bold;}
+/*ul.ui-selectbox li:hover { color: #000; }*/
+ul.ui-selectbox li a { display: block; padding: 0.25em; text-decoration: none; }
+ul.ui-selectbox li.selected a { color: #000; }
+ul.ui-selectbox li a:hover { color: #000; }
+ul.ui-selectbox li.selected a:hover { color: #666; } 
+ul.ui-selectbox li a span { float: right; }

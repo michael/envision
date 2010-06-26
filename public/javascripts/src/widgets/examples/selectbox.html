@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Examples - Selectbox</title>
+  
+  <!-- libraries -->
+  <script src="../lib/jquery-1.4.2.js"></script>
+  <script src="../../sorted_hash/src/sorted_hash.js"></script>
+
+  <!-- source -->
+  <script src="../src/selection.js"></script>
+  <script src="../src/selectbox.js"></script>
+  
+  <link href="../src/styles.css" media="screen" rel="stylesheet" type="text/css" />
+  
+  <script>
+    var countries = new SortedHash();
+    countries.set("at", "Austria");
+    countries.set("de", "Germany");
+    countries.set("ch", "Switzerland");
+    countries.set("cz", "Czech");
+    countries.set("pl", "Poland");
+    
+    var selection = new Selection(countries, ["at", "de"]);
+    
+    $(function(){
+      var sbox = new Selectbox($('#target'), selection);
+    });
+    
+  </script>
+</head>
+<body>
+  <h1 id="qunit-header">Selectbox Demo</h1>
+  <div id="wrapper">
+    <div id="target">
+    
+    </div>
+  </div>
+</body>
+</html>

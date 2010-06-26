@@ -9,16 +9,18 @@ header, footer, section, nav { display:block; }
 /* samo background color: #eaefe0; */
 
 html { overflow-x: hidden; }
-html,body { margin:0px; padding:0px; color: #33302a; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; font-size: 12px; background: #fff; }
+html,body { margin:0px; padding:0px; color: #33302a; font-family: 'Helvetica Neue', Arial, sans-serif; font-size: 12px; background: #fff; }
 body { margin: 0px; padding: 0px; }
 
-div#wrapper { position: absolute; top: 5px; left: 10px; right: 10px; bottom: 5px; overflow: hidden; }
+div#wrapper { position: absolute; top: 0px; left: 0px; right: 0px; bottom: 0px; overflow: hidden; }
 a { color: #3b3b32; text-decoration: none; }
 a:hover { color: #000; }
 
 h2 { font-family: 'Times'; font-style: italic; font-size: 19px; color: #3a3227; padding: 5px 5px; margin: 0px; }
 h3 { font-size: 15px; color: #3a3227; padding: 0px; margin: 0px; font-weight: normal; }
 h4 { font-family: 'Times'; font-style: italic; }
+
+h5 { margin: 0px; padding: 2px 0px; text-transform: uppercase;}
 
 
 /*
@@ -27,9 +29,9 @@ h4 { font-family: 'Times'; font-style: italic; }
 -----------------------------------------
 */
 
-section#header { font-family: 'Times'; font-style: italic; height: 44px; width: 300px; border-bottom: 2px solid #000;}
-section#header h1 { width: 200px; color: #000; font-weight: bold; margin: 0px; font-size:26px; padding: 0px; padding-top: 5px; margin-left: 0px; }
-section#header p { font-family: 'Times'; margin: 0; padding: 0; margin-left: 0px; font-size: 13px; line-height:1.3; color: #555; position: relative; top: -6px; }
+section#header { font-family: 'Helvetica Neue'; font-style: italic; height: 70px; width: 250px; border-top: 4px solid #000;}
+section#header h1 { width: 200px; color: #000; font-weight: bold; margin: 0px; font-size:26px; padding: 0px; padding-left: 10px; padding-top: 5px; margin-left: 0px; }
+section#header p { font-family: 'Helvetica Neue'; margin: 0; padding: 0; padding-left: 10px; font-size: 13px; line-height:1.3; color: #555; position: relative; top: -6px; }
 
 
 /*
@@ -38,13 +40,11 @@ section#header p { font-family: 'Times'; margin: 0; padding: 0; margin-left: 0px
 -----------------------------------------
 */
 
-#navigation { background: #fff; position: absolute; left: 325px; top: 0px; right: 0px; height: 22px; padding: 10px; border-bottom: 2px solid #000; }
+#navigation { position: absolute; left: 0px; bottom: 0px; right: 0px; height: 20px; padding: 0px; }
 
-
-ul#available-sheets { margin-left: 0; padding-left: 0; white-space: nowrap; }
-ul#available-sheets li { display: inline; list-style-type: none; }
-ul#available-sheets a { font-family: 'Times'; font-style: italic; font-size: 14px; padding: 3px 10px; background: #eee;}
-
+ul#available-sheets { margin: 0px; padding: 0px; white-space: nowrap; }
+ul#available-sheets li { margin: 0px; padding: 0px; display: inline; list-style-type: none; }
+ul#available-sheets a { font-family: 'Times'; font-style: italic; font-size: 14px; padding: 3px 5px; background: #eee;}
 ul#available-sheets a:hover, ul#available-sheets li.selected a { color: #fff; background-color: #000; text-decoration: none; }
 
 /*
@@ -53,16 +53,26 @@ ul#available-sheets a:hover, ul#available-sheets li.selected a { color: #fff; ba
 -----------------------------------------
 */
 
-section#facets { background: #fff; position: absolute; top: 50px; bottom: 0px; width: 300px; padding: 0px; overflow: auto; }
+section#facets { background: #fff; position: absolute; top: 70px; bottom: 0px; width: 250px; padding: 0px; overflow: auto; }
 
 .facet ul { margin: 0px; padding: 0px; display: none; }
 .facet.selected ul { display: block; }
-.facet li { list-style: none; margin: 0; padding: 0.25em; border-bottom: 1px solid gray; overflow: auto;}
-.facet li:hover { background: #eee; }
-.facet li a { float: left; text-decoration: none; }
-.facet li span { float: right; }
+.facet li { list-style: none; margin: 0; padding: 0.25em; overflow: auto; }
+
+.facet li a { display: block; }
+.facet li a span { float: right; }
+/*.facet li a { float: left; text-decoration: none; }
+.facet li span { float: right; }*/
 .facet .facet-choices { overflow: auto; }
-.facet h3 { padding: 3px; font-family: 'Times'; font-style: italic; background: #006fa4; }
+
+.facet li.facet-choice { color: #888; }
+.facet li.facet-choice a { color: #888; }
+.facet li.facet-choice a:hover { color: black }
+
+.facet li.facet-choice.selected { color: black; }
+.facet li.facet-choice.selected a { color: black;  font-weight: bold;}
+
+.facet h3 { padding: 3px; text-transform: uppercase; font-weight: bold; background: #333; font-size: 11px; margin-top: 1px; }
 .facet h3:hover { background: black; }
 .facet.selected h3 { background: black; }
 .facet h3 a { color: white; display: block; }
@@ -74,8 +84,52 @@ section#facets { background: #fff; position: absolute; top: 50px; bottom: 0px; w
 -----------------------------------------
 */
 
-section#results { background: #fff; position: absolute; left: 325px; top: 50px; bottom: 0px; right: 0px; overflow: auto; }
-#chart { float: left; overflow: auto; }
+section#results { position: absolute; left: 265px; top: 0px; bottom: 0px; right: 0px; }
+
+/*
+-----------------------------------------
+ Visualiztaions
+-----------------------------------------
+*/
+
+#visualizations { overflow: auto; position: absolute; top: 0px; left: 0px; height: 70px; right: 200px; border-top: 4px solid #000;}
+#visualizations ul { margin: 0px; padding: 0px; }
+#visualizations ul li { display: block; background: #777; float: left; list-style-type: none; margin-right: 5px; width: 50px; height: 50px; background: #ccc; }
+#visualizations ul li a { display: block; height: 50px; color: white; overflow: hidden;}
+
+#visualizations ul li#visualization_barchart a { background-image: url('/images/icons/barchart.png'); }
+#visualizations ul li#visualization_barchart_matrix a { background-image: url('/images/icons/barchart_matrix.png'); }
+#visualizations ul li#visualization_scatterplot a { background-image: url('/images/icons/scatterplot.png'); }
+#visualizations ul li#visualization_table a { background-image: url('/images/icons/table.png'); }
+
+#visualizations ul li.selected { background: #000; }
+#visualizations ul li:hover { background: #000; }
+
+/*
+-----------------------------------------
+ History
+-----------------------------------------
+*/
+
+#history { overflow: auto; position: absolute; top: 0px; right: 0px; height: 70px; width: 185px; border-top: 4px solid #000; }
+
+/*
+-----------------------------------------
+ Trail
+-----------------------------------------
+*/
+
+#trail { font-size: 20px; position: absolute; top: 70px; left: 0px; right: 200px; height: 30px; border-bottom: 1px solid black; }
+#trail span.item_count { font-size: 25px; font-weight: bold; }
+
+
+/*
+-----------------------------------------
+ Chart
+-----------------------------------------
+*/
+
+#chart { overflow: auto; position: absolute; top: 100px; bottom: 25px; left: 0px; right: 200px;}
 
 /*
 -----------------------------------------
@@ -83,23 +137,14 @@ section#results { background: #fff; position: absolute; left: 325px; top: 50px; 
 -----------------------------------------
 */
 
-#sheet-settings { top: 0px; float: right; width: 190px;}
-#sheet-settings h3 { color: white; padding: 3px; font-family: 'Times'; font-style: italic; background: #006fa4; }
-#sheet-settings h3:hover { background: black; }
+#sheet-settings { position: absolute; top: 100px; bottom: 0px; right: 0px; width: 185px; }
+#sheet-settings h3 { padding: 3px; font-size: 11px; text-transform: uppercase; font-weight: bold; border-bottom: 2px solid black; }
 
-/* Settings selection */
-
-#sheet-settings ul { margin: 0px; padding: 0px; }
-#sheet-settings li { list-style: none; margin: 0; padding: 0.25em; border-bottom: 1px solid gray; overflow: auto;}
-#sheet-settings ul.selected li {background: #ccc;}
-#sheet-settings li:hover { background: #eee; }
-#sheet-settings li a { float: left; text-decoration: none; }
-#sheet-settings li span { float: right; }
 
 #sheet-settings div.param { overflow: auto; }
-#sheet-settings #operations label { width: 20px; float: left; }
-#sheet-settings #operations input { width: 20px; float: right; }
-#sheet-settings #operation_params select { width: 60px; float: right; }
+#sheet-settings #transformers label { width: 20px; float: left; }
+#sheet-settings #transformers input { width: 20px; float: right; }
+#sheet-settings #transformer_params select { width: 60px; float: right; }
 
 /*
 -----------------------------------------
@@ -108,6 +153,46 @@ section#results { background: #fff; position: absolute; left: 325px; top: 50px; 
 */
 
 section#content { display: none; position: absolute; top: 200px; bottom: 200px; left: 0px; right: 0px; margin-top: 5px; margin: auto; width: 400px; }
+
+
+/*
+-----------------------------------------
+ Widgets
+-----------------------------------------
+*/
+
+ul.ui-multiselect { margin: 0px; padding: 0px; }
+ul.ui-multiselect li { list-style: none; margin: 0; padding: 0; overflow: auto;}
+ul.ui-multiselect li.selected { color: #000; font-weight: bold;}
+
+ul.ui-multiselect li a { display: block; padding: 0.25em; text-decoration: none; }
+ul.ui-multiselect li.selected a { color: #000; }
+ul.ui-multiselect li a:hover { color: #000; }
+ul.ui-multiselect li.selected a:hover { color: #666; } 
+ul.ui-multiselect li a span { float: right; }
+
+ul.ui-selectbox { margin: 0px; padding: 0px; }
+ul.ui-selectbox li { list-style: none; margin: 0; padding: 0; overflow: auto;}
+ul.ui-selectbox li.selected { color: #000; font-weight: bold;}
+
+ul.ui-selectbox li a { display: block; padding: 0.25em; text-decoration: none; }
+ul.ui-selectbox li.selected a { color: #000; }
+ul.ui-selectbox li a:hover { color: #000; }
+ul.ui-selectbox li.selected a:hover { color: #666; }
+ul.ui-selectbox li a span { float: right; }
+
+
+/*
+-----------------------------------------
+ Visualizations
+-----------------------------------------
+*/
+
+table {}
+table th { text-align: left; }
+table td { vertical-align: top; }
+
+
 
 /*
 -----------------------------------------
