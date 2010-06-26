@@ -1,10 +1,13 @@
-// holds the Sheet state
-// selected measure keys, visualization etc.
+//-----------------------------------------------------------------------------
+// Sheet
+//-----------------------------------------------------------------------------
+
 var Sheet = function(app, collection, options) {
   var that = this;
   
   this.app = app; // the sammy application context
   this.collection = collection;
+  this.sheets = options.sheets;
   
   this.commands = [];
   this.measureKeys = [];
@@ -36,21 +39,40 @@ var Sheet = function(app, collection, options) {
 };
 
 
+// Commands related
+//-----------------------------------------------------------------------------
+
 Sheet.prototype.undo = function() {
-  this.commands.pop().unexecute();
-  this.render();
+  if (this.currentCommand >= 0) {
+    this.commands[this.currentCommand].unexecute();
+    this.currentCommand -= 1;
+    this.render();    
+  }
+};
+
+Sheet.prototype.redo = function() {
+  if (this.currentCommand < this.commands.length-1) {
+    this.currentCommand += 1;
+    this.commands[this.currentCommand].execute();
+    this.render();    
+  }
 };
 
 // Takes a command spec, constructs the command and executes it
-// TODO: clean up that search and replace madness
+// TODO: clean up the search and replace madness
 Sheet.prototype.applyCommand = function(spec) {
   var cmd;
   if (spec.command === 'add_criterion') {
     cmd = new AddCriterion(this, spec.options);
   } else if(spec.command === 'remove_criterion') {
     cmd = new RemoveCriterion(this, spec.options);
-  } else if (spec.command === 'perform_operation') {
-    cmd = new PerformOperation(this, spec.options);
+  } else if (spec.command === 'perform_transformer') {
+    cmd = new PerformTransformer(this, spec.options);
+  }
+  
+  // remove follow-up commands (redo-able commands)
+  if (this.currentCommand < this.commands.length-1) {
+    this.commands.splice(this.currentCommand+1);
   }
   
   // insertion position
@@ -63,7 +85,7 @@ Sheet.prototype.applyCommand = function(spec) {
   
   if (pos >= 0) {
     // restore state
-    this.collection = this.commands[pos].collection;
+    this.commands[pos].unexecute();
     // remove matched inverse command
     this.commands.splice(pos, 1);
     // execute all follow-up commands [pos..this.commands.length-1]
@@ -74,94 +96,127 @@ Sheet.prototype.applyCommand = function(spec) {
     this.commands.push(cmd);
     cmd.execute();
   }
+  
+  this.currentCommand = this.commands.length-1;
   return cmd;
 };
 
+// Commands
+//-----------------------------------------------------------------------------
 
 Sheet.prototype.updateCanvasSize = function() {
-  $('#chart').width($('#results').width()-$('#sheet-settings').width()-30);
-  $('#chart').height($('#results').height()-20);
+  // $('#chart').width($('#results').width()-$('#sheet-settings').width()-30);
+  // $('#chart').height($('#results').height()-20);
 };
 
-Sheet.prototype.update = function() {
-  console.info("updating view settings ...");
-  this.measureKeys = $('select#measure_keys').val() || [];
-  this.identityKeys = $('select#identity_keys').val() || [];
-  this.groupKeys = $('select#group_keys').val() || [];
-  this.aggregated = $('input#aggregated').is(':checked');
-  this.visualization = $('select#visualization').val();
+Sheet.prototype.selectVisualization = function(visualization) {
+  this.visualization = visualization;
+  $('#visualizations ul li').removeClass('selected');
+  $('#visualization_'+visualization).addClass('selected');
+  this.render();
+};
+
+Sheet.prototype.selectTransformer = function(transformer) {
+  var that = this,
+      html = '';
+      
+  this.transformer = transformer;
   
-  var that = this;
-  // modify the view by performing an collection operation on it
-  // TODO: make dynamic
-  if (this.operation) {
+  var html = '';
+  // iterate over params
+  $.each(Collection.transformers[transformer].params, function(key, param) {
+    var v = that.view(); // TODO: optimize!
+            
+    html += Mustache.to_html(that.app.templates['params/' + param.type + '.mustache'], {
+      key: key,
+      name: Collection.transformers[transformer].params[key].name,
+      properties: v.properties, 
+      aggregators: v.aggregators
+    });
+  });
+  
+  html += '<a id="perform_transformer" href="#">perform</a>';
+  
+  $('#transformer_params').html(html);
+  $('a#perform_transformer').click(function() {
+    
     var params = {};
-    var params_as_array = $('#operation_params *').serializeArray();
+    var params_as_array = $('#transformer_params *').serializeArray();
     $.each(params_as_array, function(index, param) {
       params[param.name] = param.value;
     });
-    if (this.collection.performOperation(this.operation, params)) {
-      // after each operation the view needs to be re-rendered
-      that.render();
-    };
-  }
-
-  this.renderChart();
-  
-  // store view changes on the server
-  $.ajax({
-    url: '/projects/'+this.projectId+'/sheets/'+this.id+'.json',
-    type: 'put',
-    data: {
-      measure_keys: that.measureKeys,
-      identity_keys: that.identityKeys,
-      group_keys: that.groupKeys,
-      aggregated: that.aggregated,
-      visualization: that.visualization
-    }
-  });
-};
-
-
-Sheet.prototype.transformMultiselect = function(element) {
-  element.hide(); // hide but keep the logic
-
-  var selectedList = $('<ul class="selected"></ul>'),
-      availableList = $('<ul class="available"></ul>'),
-      options = element.find('option');
     
-  element.after(selectedList);
-  selectedList.after(availableList);
-
-  options.each(function() {
-    var li = $('<li><a href="">'+$(this).text()+'</a><span></span></li>');
-    var selected = $(this).attr('selected');
-  
-    li.data('option', this);
-    li.children('a').click(function() {
-      var option = $($(this).parent().data('option'));
-    
-      // flip selected option
-      option.attr('selected', !option.attr('selected'));
-      option.parent().trigger('change');
-    
-      $(this).parent().appendTo(option.attr('selected') ? selectedList : availableList);
-      return false;
+    that.applyCommand({
+      command: 'perform_transformer',
+      options: { transformer: that.transformer, params: params }
     });
-  
-    li.appendTo(selected ? selectedList : availableList);
+    
+    that.render();
+    return false;
   });
 };
+
+
+// Sheet.prototype.update = function() {
+//   // store view changes on the server
+//   $.ajax({
+//     url: '/projects/'+this.projectId+'/sheets/'+this.id+'.json',
+//     type: 'put',
+//     data: {
+//       measure_keys: that.measureKeys,
+//       identity_keys: that.identityKeys,
+//       group_keys: that.groupKeys,
+//       aggregated: that.aggregated,
+//       visualization: that.visualization
+//     }
+//   });
+// };
 
 Sheet.prototype.render = function() {
-  var html = Mustache.to_html(this.app.templates['sheet.mustache'], this.view());
+  var html = Mustache.to_html(this.app.templates['sheet.mustache'], this.view()),
+      that = this;
+
   $('#results').html(html);
+  
+  // update trail
+  $('#trail').html('<span class="item_count">'+this.collection.all('items').length+'</span> Items');
+  
+  // TODO: find a more suitable way.
+  var nestedProperties = new SortedHash();
+  this.collection.all('properties').eachKey(function(key, p) {
+    nestedProperties.set(key, p);
+    
+    if (p.type === 'collection') {
+      $.each(p.collection_properties, function(k, p) {
+        nestedProperties.set(key+'::'+k, {name: '---'+p.name});
+      });
+    }
+  });
+  
+  var measures = new Multiselect($('#measure_keys'), nestedProperties, this.measureKeys, {
+    change: function(selection) {
+      // update measureKeys and re-render
+      that.measureKeys = selection.keys();
+      that.renderChart();
+    }
+  });
+  
+  // TODO: find a more automated way.
+  var transformers = new SortedHash();
+  $.each(Collection.transformers, function(key, t) {
+    transformers.set(key, {name: t.label });
+  });
+  
+  var transformation = new Selectbox($('#transformer'), transformers, [], {
+    change: function(selection) {
+      that.selectTransformer(selection.firstKey());
+    }
+  });
+  
   this.updateCanvasSize();
   this.renderChart();
   this.app.trigger('register_events');
   
-  // transform multiselect boxes
-  this.transformMultiselect($('#measure_keys'));
   // delegate to facets renderer
   this.facets.render();
 };
@@ -179,8 +234,8 @@ Sheet.prototype.renderChart = function() {
   chart.render();
 };
 
-//-----------------------------------------------------------------------------
-// The exposed View used for mustaches
+
+// View (used by Mustache templates)
 //-----------------------------------------------------------------------------
 
 Sheet.prototype.view = function() {
@@ -209,39 +264,7 @@ Sheet.prototype.view = function() {
       identityKeySelected: $.inArray(key, that.identityKeys) > -1
     });
   });
-  
-  // nested_properties
-  properties.eachKey(function(key, p) {
-    view.nested_properties.push({
-      key: key,
-      name: p.name,
-      type: p.type,
-      measureKeySelected: $.inArray(key, that.measureKeys) > -1,
-      identityKeySelected: $.inArray(key, that.identityKeys) > -1
-    });
-    
-    if (p.type === 'collection') {
-      $.each(p.collection_properties, function(k, p) {
-        view.nested_properties.push({
-          key: key+"::"+k,
-          name: "--- "+p.name,
-          type: p.type,
-          measureKeySelected: $.inArray(key+"::"+k, that.measureKeys) > -1,
-          identityKeySelected: $.inArray(key+"::"+k, that.identityKeys) > -1
-        });
-      });
-    }
-  });
-    
-  // transformers
-  $.each(Collection.transformers, function(key, operation) {
-    view.operations.push({
-      key: key,
-      label: operation.label,
-      selected: false
-    });
-  });
-    
+
   // visualizations
   $.each(Chart.visualizations, function(key, vis) {
     view.visualizations.push({
@@ -251,6 +274,8 @@ Sheet.prototype.view = function() {
     });
   });
   
+  view.sheets = this.sheets;
+
   view.aggregators =  [
     {key: 'SUM', name: "Sum"},
     {key: 'MIN', name: "Minimum"},

@@ -6,7 +6,6 @@ FILES = [
   "project.mustache",
   "projects.mustache",
   "sheet.mustache",
-  "sheets.mustache",
   "params/aggregator.mustache",
   "params/number.mustache",
   "params/property.mustache",

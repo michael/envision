@@ -21,7 +21,8 @@ class Sheet < Envision::Model
       :identity_keys => identity_keys,
       :group_keys => group_keys,
       :aggregated => aggregated,
-      :commands => []
+      :commands => [],
+      :sheets => project.sheets.map { |s| {:id => s.id, :name => s.name, :project_id => project.id}}
     }
   end
   

@@ -2,9 +2,11 @@
 <html>
 <head>
   <title>Envision / Collection Explorer</title>
-  <%= stylesheet_link_tag :all %>
+  <link href="/stylesheets/global.css" media="screen" rel="stylesheet" type="text/css" />
+  
   <%= csrf_meta_tag %>
   <script src="/javascripts/jquery-1.4.2.js"></script>
+  <script src="/javascripts/jquery.hotkeys.js"></script>
   <script src="/javascripts/sammy/sammy.js"></script>
   <script src="/javascripts/sammy/plugins/sammy.mustache.js"></script>
   <script src="/javascripts/sammy/plugins/sammy.json.js"></script>
@@ -17,8 +19,8 @@
 <body>
 <div id="wrapper">
   <section id="header">
-    <h1><a href="/">Envision&#8482;</a></h1>
-    <p>Collection Explorer (<a href="http://github.com/michael/envision">a work in progress...</a>)</p>
+    <h1><a href="/">Envision</a></h1>
+    <p>Collection Explorer [ <a href="http://github.com/michael/envision">?</a> ]</p>
     
   </section>
   <%= yield %>

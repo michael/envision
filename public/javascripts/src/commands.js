@@ -29,15 +29,12 @@ AddCriterion.prototype.execute = function() {
   
   var criterion = new Criterion(this.options.operator, this.options.property, this.options.value);
   this.sheet.collection = this.collection.filter(criterion);
-  
-  // to be reflected in the UI
-  // this.sheet.selectedFacets[this.options.property] = { this.options.value: true };
+  this.sheet.facets.addChoice(this.options.property, this.options.operator, this.options.value);
 };
 
 AddCriterion.prototype.unexecute = function() {
   this.sheet.collection = this.collection; // restore the old state
-  // to be reflected in the UI
-  // delete this.sheet.selectedFacets[this.options.property][this.options.value];
+  this.sheet.facets.removeChoice(this.options.property, this.options.operator, this.options.value);
 };
 
 //-----------------------------------------------------------------------------
@@ -59,18 +56,37 @@ RemoveCriterion.prototype.unexecute = function() {
 
 
 //-----------------------------------------------------------------------------
-// PerformOperation
+// PerformTransformer
 //-----------------------------------------------------------------------------
 
-var PerformOperation = function(sheet, options) {
+var PerformTransformer = function (sheet, options) {
   this.sheet = sheet;
   this.options = options;
+  console.log('constructed PerformTransformer command');
 };
 
-PerformOperation.prototype.execute = function() {
-  console.log('performing operation');
+PerformTransformer.prototype.matchesInverse = function(other) {
+  // No inversion for applied transformers possible
+  return false;
 };
 
-PerformOperation.prototype.unexecute = function() {
-  console.log('unperforming opration');
+PerformTransformer.prototype.execute = function() {
+  // memoize
+  this.collection = this.sheet.collection;
+  this.facetChoices = this.sheet.facets.facetChoices;
+  this.measureKeys = this.sheet.measureKeys;
+  this.visualization = this.sheet.visualization;
+  
+  // execute
+  this.sheet.collection = this.sheet.collection.transform(this.options.transformer, this.options.params);
+  this.sheet.facets.facetChoices = {};
+  this.sheet.measureKeys = [];
+  this.sheet.visualization = 'table';
+};
+
+PerformTransformer.prototype.unexecute = function() {
+  this.sheet.collection = this.collection;
+  this.sheet.facets.facetChoices = this.facetChoices;
+  this.sheet.measureKeys = this.measureKeys;
+  this.sheet.visualization = this.visualization;
 };

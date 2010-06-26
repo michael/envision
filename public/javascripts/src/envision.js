@@ -20,42 +20,34 @@ var envision = $.sammy(function() {
   // Event handlers
   //-----------------------------------------------------------------------------
 
-  this.bind('update_sheet', function(e, data) {
-    app.sheet.update();
-  });
-  
-  this.bind('render_sheet', function(e, data) {
-    app.sheet.update();
-  });
-  
   this.bind('add_criterion', function(e, options) {
     app.sheet.applyCommand({command: 'add_criterion', options: options });
     app.sheet.render();
   });
   
-  // TODO: modularize!
-  this.bind('switch_operation', function(e, data) {
-    var operation = app.sheet.operation = $('select#operation').val(),
-        that = this;
-    
-    // initialize params section
-    if (operation) {
-      var html = '';
-      // iterate over params
-      $.each(Collection.operations[operation].params, function(key, param) {
-        var v = app.sheet.view(); // TODO: optimize!
-                
-        html += Mustache.to_html(app.templates['params/' + param.type + '.mustache'], {
-          key: key,
-          name: Collection.operations[operation].params[key].name,
-          properties: v.properties, 
-          aggregators: v.aggregators
-        });
-      });
-      
-      $('#operation_params').html(html);
-      app.trigger('register_events');
-    }
+  this.bind('remove_criterion', function(e, options) {
+    app.sheet.applyCommand({command: 'remove_criterion', options: options });
+    app.sheet.render();
+  });
+  
+  $(document).bind('keydown', 'alt+left', function() {
+    app.sheet.undo();
+    return false;
+  });
+  
+  $(document).bind('keydown', 'alt+right', function() {
+    app.sheet.redo();
+    return false;
+  });
+  
+  $('#undo').click(function() {
+    app.sheet.undo();
+    return false;
+  });
+  
+  $('#redo').click(function() {
+    app.sheet.redo();
+    return false;
   });
   
   //-----------------------------------------------------------------------------
@@ -78,14 +70,9 @@ var envision = $.sammy(function() {
     $('#operation_params input').change(function() {
       app.trigger('update_sheet');
     });
-    
-    $('#undo').click(function() {
-      app.sheet.undo();
-      return false;
-    });
   });
   
-  //-----------------------------------------------------------------------------
+
   // Root - List Projects
   //-----------------------------------------------------------------------------
 
@@ -98,7 +85,7 @@ var envision = $.sammy(function() {
     });
   });
   
-  //-----------------------------------------------------------------------------
+
   // Show Project - List Sheets
   //-----------------------------------------------------------------------------
 
@@ -109,7 +96,7 @@ var envision = $.sammy(function() {
     });
   });
   
-  //-----------------------------------------------------------------------------
+
   // Show Sheet
   //-----------------------------------------------------------------------------
 
@@ -120,13 +107,11 @@ var envision = $.sammy(function() {
       app.collection = new Collection(sheet.collection);
       app.sheet = new Sheet(app, app.collection, sheet);
       app.sheet.render();
-      $.getJSON('projects/'+ctx.params['project_id']+'.json', function (project) {
-        // render sheet navigation
-        var html = Mustache.to_html(app.templates['sheets.mustache'], project);
-        $('#navigation').html(html);
-      });
     });
   });
+
+  // Add Criterion
+  //-----------------------------------------------------------------------------
 
   this.get('#/add_criterion/:property/:operator/:value', function(ctx) {
     app.trigger('add_criterion', {
@@ -136,18 +121,37 @@ var envision = $.sammy(function() {
     });
   });
   
-  this.get('#/select_facet/:property', function(ctx) {
-    app.sheet.facets.select($('#facet_'+ctx.params['property']));
-  });
-  this.get('#/redo', function(ctx) {
-    console.log('not yet implemented.');
+  
+  // Remove Criterion
+  //-----------------------------------------------------------------------------
+  
+  this.get('#/remove_criterion/:property/:operator/:value', function(ctx) {
+    app.trigger('remove_criterion', {
+      property: ctx.params['property'],
+      operator: ctx.params['operator'],
+      value: ctx.params['value']
+    });
   });
   
+  // Select Facet
   //-----------------------------------------------------------------------------
+  
+  this.get('#/select_facet/:property', function(ctx) {
+    app.sheet.facets.select(ctx.params['property']);
+  });
+  
+  // Select Visualization
+  //-----------------------------------------------------------------------------
+  
+  this.get('#/select_visualization/:visualization', function(ctx) {
+    app.sheet.selectVisualization(ctx.params['visualization']);
+  });
+  
+
   // Misc
   //-----------------------------------------------------------------------------
 
-  // keep everything in shape during resize
+  // Keep everything in shape during resize
   $(window).resize(function () {
     app.sheet.facets.updatePanelHeight();
     app.sheet.updateCanvasSize();

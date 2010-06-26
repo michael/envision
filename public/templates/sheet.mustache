@@ -1,40 +1,40 @@
+<div id="visualizations">
+  <h5>Visualizations</h5>
+  <ul>
+    {{#visualizations}}
+      <li id="visualization_{{code}}"{{#selected}} class="selected {{code}}"{{/selected}}><a href="#/select_visualization/{{code}}" title="{{class_name}}"></a></li>
+    {{/visualizations}}
+  </ul>
+</div>
+<div id="history">
+  <h5>History</h5>
+  <a id="undo" href="#/undo">Undo</a> |
+  <a id="redo" href="#/redo">Redo</a>
+
+  <!-- command sequence -->
+</div>
+<div id="trail">
+  
+</div>
 <div id="chart"></div>
 <div id="sheet-settings">
   <div id="measures">
-    <a id="undo" href="#/undo">Undo</a> |
-    <a id="redo" href="#/redo">Redo</a>
     <h3>Measures</h3>
-    <select id="measure_keys" multiple="multiple" name="measure_keys[]">
-      {{#nested_properties}}
-        <option {{#measureKeySelected}}selected="selected"{{/measureKeySelected}} value="{{key}}">{{name}} ({{type}})</option>
-      {{/nested_properties}}
-    </select>
+    <div id="measure_keys"></div>
   </div>
-  <div id="operations">
-    <h3>Operation</h3>
-    <select id="operation" name="operation"> \
-      <option value="">No selection</option>
-      {{#operations}}
-        <option value="{{key}}">{{label}}</option>
-      {{/operations}}
-    </select>
-    <div id="operation_params">
-    </div>
+  <div id="transformers">
+    <h3>Transformations</h3>
+    <div id="transformer"></div>
+    <div id="transformer_params"></div>
   </div>
-  <div id="visualizations">
-    <h3>Visualization</h3>
-    <select id="visualization" name="visualization">
-      {{#visualizations}}
-        <option {{#selected}}selected="selected"{{/selected}} value="{{code}}">{{class_name}}</option>
-      {{/visualizations}}
-    </select>
-  </div>
-  <!--<div id="identification">
-    <h3>Identify By</h3>
-    <select id="identity_keys" multiple="multiple" name="identity_keys[]">
-      {{#properties}}
-        <option {{#identityKeySelected}}selected="selected"{{/identityKeySelected}} value="{{key}}">{{name}} ({{type}})</option>
-      {{/properties}}
-    </select>
-  </div>-->
 </div>
+<div id="navigation">
+  <ul id="available-sheets">
+    {{#sheets}}
+      <li id="sheet_{{id}}" class="sheet">
+        <a href="#/projects/{{project_id}}/sheets/{{id}}">{{name}}</a>
+      </li>
+    {{/sheets}}
+  </ul>
+</div>
+

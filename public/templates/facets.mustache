@@ -2,8 +2,11 @@
   <div class="facet" id="facet_{{property}}">
     <h3><a href="#/select_facet/{{property}}">{{property_name}}</a></h3>
     <ul class="facet-choices">
+      {{#selected_facet_choices}}
+        <li class="facet-choice selected"><a href="#/remove_criterion/{{property}}/CONTAINS/{{value}}">{{value}}<span class="item-count">{{item_count}}</span></a></li>
+      {{/selected_facet_choices}}
       {{#facet_choices}}
-        <li><a class="facet-choice" href="#/add_criterion/{{property}}/CONTAINS/{{value}}">{{value}}</a><span class="item-count">({{item_count}})</span></li>
+        <li class="facet-choice"><a href="#/add_criterion/{{property}}/CONTAINS/{{value}}">{{value}}<span class="item-count">{{item_count}}</span></a></li>
       {{/facet_choices}}
     </ul>
   </div>
